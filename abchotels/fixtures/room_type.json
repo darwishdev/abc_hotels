@@ -7,9 +7,10 @@
   "is_closed": 0,
   "maximum_guests_number": 2,
   "minimum_guests_number": 1,
-  "modified": "2025-08-28 10:33:18.473244",
-  "name": "Superior Bungalows King",
-  "room_category": "Superior",
+  "modified": "2025-08-28 10:33:48.711458",
+  "name": "Standard Bungalows Twin",
+  "pay_master": 0,
+  "room_category": "Bungalows",
   "room_type_amenities": [],
   "room_type_description": null,
   "room_type_image": null,
@@ -23,12 +24,13 @@
   "is_closed": 0,
   "maximum_guests_number": 2,
   "minimum_guests_number": 1,
-  "modified": "2025-08-28 10:33:48.711458",
-  "name": "Superior Bungalows Twin",
-  "room_category": "Superior",
+  "modified": "2025-08-31 15:06:35.356465",
+  "name": "Superior Bungalows King",
+  "pay_master": 0,
+  "room_category": "Bungalows",
   "room_type_amenities": [],
   "room_type_description": null,
   "room_type_image": null,
-  "unit_area": 20.0
+  "unit_area": 40.0
  }
 ]

@@ -4,15 +4,15 @@
   "doctype": "Room Type Room",
   "floor": 0,
   "is_pay_master": 0,
-  "modified": "2025-08-28 10:34:54.239181",
-  "name": "1001",
+  "modified": "2025-08-31 15:15:47.564411",
+  "name": "5001",
   "room_status": "Available",
-  "room_type_name": "Superior Bungalows King",
+  "room_type_name": "Standard Bungalows Twin",
   "room_type_room_beds": [
    {
-    "bed_count": 1,
-    "bed_type_name": "King Bed",
-    "parent": "1001",
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5001",
     "parentfield": "room_type_room_beds",
     "parenttype": "Room Type Room"
    }
@@ -24,15 +24,335 @@
   "doctype": "Room Type Room",
   "floor": 0,
   "is_pay_master": 0,
-  "modified": "2025-08-28 10:35:19.133963",
-  "name": "1002",
+  "modified": "2025-08-31 15:16:29.679776",
+  "name": "5002",
   "room_status": "Available",
-  "room_type_name": "Superior Bungalows King",
+  "room_type_name": "Standard Bungalows Twin",
   "room_type_room_beds": [
    {
     "bed_count": 2,
     "bed_type_name": "Twin Bed",
-    "parent": "1002",
+    "parent": "5002",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:18:30.117638",
+  "name": "5003",
+  "room_status": "Available",
+  "room_type_name": "Standard Bungalows Twin",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5003",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:19:58.032339",
+  "name": "5004",
+  "room_status": "Available",
+  "room_type_name": "Standard Bungalows Twin",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5004",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:23:07.798685",
+  "name": "5008",
+  "room_status": "Available",
+  "room_type_name": "Standard Bungalows Twin",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5008",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:23:36.843389",
+  "name": "5005",
+  "room_status": "Available",
+  "room_type_name": "Standard Bungalows Twin",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5005",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:23:43.006043",
+  "name": "5006",
+  "room_status": "Available",
+  "room_type_name": "Standard Bungalows Twin",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5006",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:23:50.527013",
+  "name": "5007",
+  "room_status": "Available",
+  "room_type_name": "Standard Bungalows Twin",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "5007",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:25:53.579898",
+  "name": "4001",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4001",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:28:40.266734",
+  "name": "4002",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4002",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:28:45.959075",
+  "name": "4003",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4003",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:28:49.207316",
+  "name": "4004",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4004",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:28:53.772612",
+  "name": "4005",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4005",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:28:59.861936",
+  "name": "4006",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4006",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:29:03.569336",
+  "name": "4007",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4007",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:29:11.409059",
+  "name": "4008",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4008",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:29:28.938183",
+  "name": "4009",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4009",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-31 15:29:32.751454",
+  "name": "4010",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "4010",
     "parentfield": "room_type_room_beds",
     "parenttype": "Room Type Room"
    }
