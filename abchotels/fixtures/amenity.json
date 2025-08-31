@@ -1,0 +1,51 @@
+[
+ {
+  "amenity_icon": "🍽️",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.158357",
+  "name": "Restaurant"
+ },
+ {
+  "amenity_icon": "🛎️",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.181354",
+  "name": "Room service"
+ },
+ {
+  "amenity_icon": "🏖️",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.184142",
+  "name": "Beachfront"
+ },
+ {
+  "amenity_icon": "🚭",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.186857",
+  "name": "Non-smoking rooms"
+ },
+ {
+  "amenity_icon": "🅿️",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.189916",
+  "name": "Free parking"
+ },
+ {
+  "amenity_icon": "🏝️",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.192872",
+  "name": "Private beach area"
+ },
+ {
+  "amenity_icon": "☕",
+  "docstatus": 0,
+  "doctype": "Amenity",
+  "modified": "2025-08-21 06:37:46.195767",
+  "name": "Breakfast"
+ }
+]

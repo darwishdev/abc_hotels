@@ -1,0 +1,38 @@
+[
+ {
+  "bed_length": 191.0,
+  "bed_type_icon": null,
+  "bed_width": 97.0,
+  "docstatus": 0,
+  "doctype": "Bed Type",
+  "modified": "2025-08-19 20:03:47.528127",
+  "name": "Twin Bed"
+ },
+ {
+  "bed_length": 203.0,
+  "bed_type_icon": null,
+  "bed_width": 193.0,
+  "docstatus": 0,
+  "doctype": "Bed Type",
+  "modified": "2025-08-19 20:03:18.960019",
+  "name": "King Bed"
+ },
+ {
+  "bed_length": 203.0,
+  "bed_type_icon": null,
+  "bed_width": 152.0,
+  "docstatus": 0,
+  "doctype": "Bed Type",
+  "modified": "2025-08-19 20:03:29.060952",
+  "name": "Queen Bed"
+ },
+ {
+  "bed_length": 191.0,
+  "bed_type_icon": null,
+  "bed_width": 97.0,
+  "docstatus": 0,
+  "doctype": "Bed Type",
+  "modified": "2025-08-19 20:03:39.750301",
+  "name": "Single Bed"
+ }
+]

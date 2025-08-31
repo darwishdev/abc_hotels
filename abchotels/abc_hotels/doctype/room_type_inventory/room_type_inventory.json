@@ -1,0 +1,97 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2025-08-21 07:33:34.045879",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "room_type",
+  "for_date",
+  "occupied_count",
+  "out_of_order_count",
+  "is_checkin_disabled",
+  "is_checkout_disabled",
+  "section_break_pldk",
+  "rate_codes"
+ ],
+ "fields": [
+  {
+   "fieldname": "room_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Room Type",
+   "options": "Room Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "occupied_count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Occupied Count",
+   "reqd": 1
+  },
+  {
+   "fieldname": "out_of_order_count",
+   "fieldtype": "Int",
+   "label": "Out Of Order Count",
+   "reqd": 1
+  },
+  {
+   "fieldname": "for_date",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_checkin_disabled",
+   "fieldtype": "Check",
+   "label": "Is Checkin Disabled"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_checkout_disabled",
+   "fieldtype": "Check",
+   "label": "Is Checkout Disabled"
+  },
+  {
+   "fieldname": "section_break_pldk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "rate_codes",
+   "fieldtype": "Table",
+   "label": "Rate Codes",
+   "options": "Room Type Inventory Rate Code"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-25 16:34:41.500401",
+ "modified_by": "Administrator",
+ "module": "ABC Hotels",
+ "name": "Room Type Inventory",
+ "naming_rule": "Random",
+ "owner": "a.darwish.dev@gmail.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

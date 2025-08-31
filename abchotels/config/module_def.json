@@ -1,0 +1,8 @@
+{
+  "name": "ABC Hotels",
+  "owner": "Administrator",
+  "description": "Module for managing hotel operations in ABC Hotels app",
+  "module_name": "ABC Hotels",
+  "custom": 1,
+  "doctypes": ["Account"]
+}

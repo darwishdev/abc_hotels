@@ -1,0 +1,32 @@
+{
+ "content": null,
+ "creation": "2025-08-26 17:47:17.356817",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-08-26 17:47:17.356817",
+ "modified_by": "Administrator",
+ "module": "ABC Hotels",
+ "name": "front_desk_dashborad",
+ "owner": "Administrator",
+ "page_name": "front_desk_dashborad",
+ "roles": [
+  {
+   "role": "Hotel Manager"
+  },
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "Front Desk"
+  },
+  {
+   "role": "Front Desk Agent"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Front Desk Dashborad"
+}

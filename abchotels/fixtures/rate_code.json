@@ -1,0 +1,35 @@
+[
+ {
+  "abbriviation": "R",
+  "cacnelation_policy": "First Night Fee",
+  "color": null,
+  "days_before_check_in": 0,
+  "docstatus": 0,
+  "doctype": "Rate Code",
+  "flexible_to_ammend": 0,
+  "modified": "2025-08-29 02:13:54.960212",
+  "name": "RACK",
+  "pay_in_advance": 0,
+  "rate_category": null,
+  "room_types": [
+   {
+    "parent": "RACK",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Bungalows King",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "RACK",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Bungalows Twin",
+    "valid_from": null,
+    "valid_to": null
+   }
+  ],
+  "valid_from": "2025-08-29",
+  "valid_to": "2025-12-31"
+ }
+]

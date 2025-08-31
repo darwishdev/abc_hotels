@@ -1,0 +1,42 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-28 10:34:54.239181",
+  "name": "1001",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "1001",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 0,
+  "modified": "2025-08-28 10:35:19.133963",
+  "name": "1002",
+  "room_status": "Available",
+  "room_type_name": "Superior Bungalows King",
+  "room_type_room_beds": [
+   {
+    "bed_count": 2,
+    "bed_type_name": "Twin Bed",
+    "parent": "1002",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ }
+]

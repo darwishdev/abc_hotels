@@ -1,0 +1,17 @@
+{
+  "category": "Modules",
+  "charts": [],
+  "content": "[{\"type\": \"header\", \"data\": {\"text\": \"ABC Hotels Dashboard\", \"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Restaurant Tables\", \"doc\": \"Restaurant Table\", \"link_to\": \"List/Restaurant Table/List\", \"col\": 4}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"POS Invoices\", \"doc\": \"POS Invoice\", \"link_to\": \"List/POS Invoice/List\", \"col\": 4}}]",
+  "extends": "",
+  "icon": "hotel",
+  "is_hidden": 0,
+  "label": "ABC Hotels",
+  "links": [],
+  "module_name": "ABC Hotels",
+  "name": "ABC Hotels",
+  "title": "ABC Hotels",
+  "onboarding": "",
+  "type": "Workspace",
+  "is_standard": 1,
+  "public": 0
+}

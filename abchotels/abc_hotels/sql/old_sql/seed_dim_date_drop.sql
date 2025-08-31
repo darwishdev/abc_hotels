@@ -1,0 +1,2 @@
+DROP PROCEDURE IF EXISTS seed_dim_date;
+

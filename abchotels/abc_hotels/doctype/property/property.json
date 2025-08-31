@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+    "allow_import": 1,
+
+ "autoname": "prompt",
+ "creation": "2025-08-19 19:41:34.492310",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "address_line",
+  "star_rating",
+  "instant_approve",
+  "iframe_url",
+  "property_image",
+  "column_break_rjhq",
+  "checkin_time_from",
+  "checkin_time_to",
+  "checkout_time_from",
+  "checkout_time_to",
+  "location_url",
+  "section_break_lbla",
+  "property_description"
+ ],
+ "fields": [
+  {
+   "fieldname": "address_line",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Address Line",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "instant_approve",
+   "fieldtype": "Check",
+   "label": "Instant Approve"
+  },
+  {
+   "fieldname": "star_rating",
+   "fieldtype": "Int",
+   "label": "Star Rating"
+  },
+  {
+   "fieldname": "iframe_url",
+   "fieldtype": "Data",
+   "label": "Iframe URL"
+  },
+  {
+   "fieldname": "location_url",
+   "fieldtype": "Data",
+   "label": "Location URL"
+  },
+  {
+   "fieldname": "property_image",
+   "fieldtype": "Attach Image",
+   "label": "Property Image"
+  },
+  {
+   "fieldname": "property_description",
+   "fieldtype": "Text Editor",
+   "label": "Property Description"
+  },
+{
+   "fieldname": "amenities_section",
+   "fieldtype": "Section Break",
+   "label": "Amenities"
+  },
+  {
+   "fieldname": "property_amenities",
+   "fieldtype": "Table",
+   "label": "Property Amenities",
+   "options": "Property Amenity"
+  },
+  {
+   "fieldname": "checkin_time_from",
+   "fieldtype": "Time",
+   "label": "Checkin Time From"
+  },
+  {
+   "fieldname": "checkin_time_to",
+   "fieldtype": "Time",
+   "label": "Checkin Time To"
+  },
+  {
+   "fieldname": "checkout_time_from",
+   "fieldtype": "Time",
+   "label": "Checkout Time From"
+  },
+  {
+   "fieldname": "checkout_time_to",
+   "fieldtype": "Time",
+   "label": "Checkout Time To"
+  },
+  {
+   "fieldname": "column_break_rjhq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_lbla",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-19 20:13:51.525654",
+ "modified_by": "Administrator",
+ "module": "ABC Hotels",
+ "name": "Property",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

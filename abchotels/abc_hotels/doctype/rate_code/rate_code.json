@@ -1,0 +1,140 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2025-08-21 06:49:52.478695",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rate_code_information_section",
+  "abbriviation",
+  "days_before_check_in",
+  "color",
+  "currency",
+  "column_break_hqvm",
+  "cacnelation_policy",
+  "rate_category",
+  "valid_from",
+  "valid_to",
+  "column_break_kxcc",
+  "pay_in_advance",
+  "flexible_to_ammend",
+  "section_break_zmsg",
+  "room_types"
+ ],
+ "fields": [
+  {
+   "fieldname": "rate_code_information_section",
+   "fieldtype": "Section Break",
+   "label": "Rate Code Information"
+  },
+  {
+   "fieldname": "abbriviation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Abbriviation",
+   "length": 4,
+   "reqd": 1
+  },
+  {
+   "fieldname": "days_before_check_in",
+   "fieldtype": "Int",
+   "label": "Days Before Check In"
+  },
+  {
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Color"
+  },
+  {
+   "fieldname": "column_break_hqvm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cacnelation_policy",
+   "fieldtype": "Link",
+   "label": "Cacnelation Policy",
+   "options": "Cancelation Policy",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_kxcc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pay_in_advance",
+   "fieldtype": "Check",
+   "label": "Pay In Advance"
+  },
+  {
+   "default": "0",
+   "fieldname": "flexible_to_ammend",
+   "fieldtype": "Check",
+   "label": "Flexible To Ammend"
+  },
+  {
+   "fieldname": "rate_category",
+   "fieldtype": "Link",
+   "label": "Rate Category",
+   "options": "Rate Category"
+  },
+  {
+   "fieldname": "section_break_zmsg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "room_types",
+   "fieldtype": "Table",
+   "label": "Room Types",
+   "options": "Rate Code Room Type"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Date",
+   "label": "Start Sell Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Date",
+   "label": "End Sell Date"
+  },
+  {
+   "default": "EGP",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-31 15:32:38.300296",
+ "modified_by": "Administrator",
+ "module": "ABC Hotels",
+ "name": "Rate Code",
+ "naming_rule": "Set by user",
+ "owner": "a.darwish.dev@gmail.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

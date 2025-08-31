@@ -1,0 +1,127 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2025-08-19 19:46:06.556854",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "room_category",
+  "minimum_guests_number",
+  "maximum_guests_number",
+  "unit_area",
+  "bathrooms_count",
+  "is_closed",
+  "base_price",
+  "room_type_image",
+  "room_type_description",
+  "pay_master",
+  "room_amenities_section",
+  "room_type_amenities"
+ ],
+ "fields": [
+  {
+   "fieldname": "room_type_description",
+   "fieldtype": "Text Editor",
+   "label": "Room Type Description"
+  },
+  {
+   "fieldname": "minimum_guests_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Minimum Guests Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "maximum_guests_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Maximum Guests Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "unit_area",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Unit Area",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bathrooms_count",
+   "fieldtype": "Int",
+   "label": "Bathrooms Count",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_closed",
+   "fieldtype": "Check",
+   "label": "Is Closed"
+  },
+  {
+   "fieldname": "base_price",
+   "fieldtype": "Currency",
+   "label": "Base Price"
+  },
+  {
+   "fieldname": "room_type_image",
+   "fieldtype": "Attach Image",
+   "label": "Room Type Image"
+  },
+  {
+   "fieldname": "room_amenities_section",
+   "fieldtype": "Section Break",
+   "label": "Amenities"
+  },
+  {
+   "fieldname": "room_type_amenities",
+   "fieldtype": "Table",
+   "label": "Room Type Amenities",
+   "options": "Room Type Amenity"
+  },
+  {
+   "fieldname": "room_category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Room Category",
+   "options": "Room Category",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "pay_master",
+   "fieldtype": "Check",
+   "label": "Pay Master"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-31 15:15:22.388398",
+ "modified_by": "Administrator",
+ "module": "ABC Hotels",
+ "name": "Room Type",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,70 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-21 23:08:30.482461",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "horizon_start_date",
+  "inventory_auto_reflect",
+  "column_break_ijvz",
+  "horizon_end_date",
+  "inventory_chunk_size"
+ ],
+ "fields": [
+  {
+   "fieldname": "horizon_start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Horizon Start Date",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "inventory_auto_reflect",
+   "fieldtype": "Check",
+   "label": "Inventory Auto Reflect"
+  },
+  {
+   "fieldname": "column_break_ijvz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "horizon_end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Horizon End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "inventory_chunk_size",
+   "fieldtype": "Int",
+   "label": "Inventory Chunk Size"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-08-21 23:25:59.443442",
+ "modified_by": "Administrator",
+ "module": "ABC Hotels",
+ "name": "ABC Hotels Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
