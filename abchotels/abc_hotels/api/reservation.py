@@ -135,6 +135,26 @@ def get_dashboard_data(as_of_date):
     }
 
 
+
+@frappe.whitelist()
+def get_night_audit_candidates(audit_date=None):
+    audit_date = audit_date or today()
+    audit_date_int = int(getdate(audit_date).strftime("%Y%m%d"))
+
+    query = "CALL switch_night_candidates(%s)"
+    conn = frappe.db.get_connection()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(query, (audit_date,))
+    rows = cur.fetchall()
+    cur.close()
+
+    # Return preview data, no modifications
+    return {
+        "ok": True,
+        "audit_date": audit_date,
+        "candidates": rows,
+        "count": len(rows),
+    }
 @frappe.whitelist()
 def run_night_audit(audit_date=None):
     audit_date = audit_date or today()

@@ -43,7 +43,7 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
     });
 
     // 🔹 Switch Night button
-    page.add_inner_button(__("Switch Night"), () => {
+    page.add_inner_button(__("End Of Day"), () => {
         frappe.confirm(__("Are you sure you want to run Night Audit?"), () => {
             frappe.call({
                 method: "abchotels.abc_hotels.api.reservation.run_night_audit",

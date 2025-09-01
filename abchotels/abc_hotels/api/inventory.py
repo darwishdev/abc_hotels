@@ -394,9 +394,8 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
 def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: str = None):
     """
     Return room type rates grid with SQL doing heavy lifting.
-    Similar structure to get_availability_grid_simple but for pricing data.
+    Data is now grouped by room_type first, then by rate_code.
     """
-
     # First, get columns from dim_date
     columns_sql = """
     WITH dates AS (
@@ -416,7 +415,6 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
         weekend_indr
     FROM dates
     """
-
     date_columns = frappe.db.sql(columns_sql, (start_date_int, end_date_int), as_dict=True)
 
     # Build room type condition
@@ -426,7 +424,7 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
         room_type_condition = "AND inv.room_type = %s"
         params.append(room_type)
 
-    # Main data query with grouping by rate_code
+    # Main data query with grouping by room_type first, then rate_code
     data_sql = f"""
     WITH dates AS (
         SELECT
@@ -440,10 +438,10 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
     ),
     rates_data AS (
         SELECT
+            inv.room_type,
             irc.rate_code,
             inv.for_date,
             irc.rate_price,
-            inv.room_type,
             d.formatted_date,
             d.weekend_indr
         FROM `tabRoom Type Inventory` inv
@@ -452,25 +450,30 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
         WHERE 1=1 {room_type_condition}
     )
     SELECT
+        room_type,
         rate_code,
         JSON_ARRAYAGG(
             JSON_OBJECT(
                 'for_date', for_date,
                 'rate_price', rate_price,
                 'room_type', room_type,
+                'rate_code', rate_code,
                 'formatted_date', formatted_date,
                 'weekend_indr', weekend_indr
             ) ORDER BY for_date
         ) AS days_data
     FROM rates_data
-    GROUP BY rate_code
-    ORDER BY rate_code
+    GROUP BY room_type, rate_code
+    ORDER BY room_type, rate_code
     """
 
     grouped_data = frappe.db.sql(data_sql, params, as_dict=True)
 
     # Build columns structure
-    columns = [{"label": "Rate Code", "fieldname": "rate_code", "width": 200}]
+    columns = [
+        {"label": "Room Type", "fieldname": "room_type", "width": 200},
+        {"label": "Rate Code", "fieldname": "rate_code", "width": 100}
+    ]
 
     for col in date_columns:
         columns.append({
@@ -480,40 +483,51 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
             "is_weekend": bool(col["weekend_indr"])
         })
 
-    # Build data structure
+    # Build data structure grouped by room type
     data = {}
 
     for rate_row in grouped_data:
+        room_type_name = rate_row["room_type"]
         rate_code = rate_row["rate_code"]
         days_data = frappe.parse_json(rate_row["days_data"]) if rate_row["days_data"] else []
 
-        # Create rate code entry
-        data[rate_code] = []
+        # Create room type entry if it doesn't exist
+        if room_type_name not in data:
+            data[room_type_name] = {}
+
+        # Create rate code entry under room type
+        data[room_type_name][rate_code] = []
 
         for day in days_data:
             rate_price = day["rate_price"] or 0
             is_weekend = day["weekend_indr"]
-            room_type_name = day["room_type"]
 
-            data[rate_code].append({
+            data[room_type_name][rate_code].append({
                 "for_date": day["for_date"],
                 "rate_price": rate_price,
                 "room_type": room_type_name,
+                "rate_code": rate_code,
                 "formatted_date": day["formatted_date"],
                 "is_weekend": bool(is_weekend)
             })
 
+    # Count totals
+    total_room_types = len(data)
+    total_rate_codes = sum(len(rate_codes) for rate_codes in data.values())
+
     return {
         "columns": columns,
         "data": data,
-        "total_rate_codes": len(data),
+        "total_room_types": total_room_types,
+        "total_rate_codes": total_rate_codes,
         "total_days": len(date_columns)
     }
 
 @frappe.whitelist(allow_guest=True, methods=["GET"])
-def get_availability_grid_simple(start_date: int, end_date: int, room_type: str = None):
+def get_availability_grid_simple(start_date: int, end_date: int, room_type: str = None, rate_code: str = None):
     """
     Return availability grid with SQL doing heavy lifting.
+    Added rate_code filter parameter (nullable).
     """
 
     # First, get columns from dim_date
@@ -538,12 +552,24 @@ def get_availability_grid_simple(start_date: int, end_date: int, room_type: str 
 
     date_columns = frappe.db.sql(columns_sql, (start_date, end_date), as_dict=True)
 
-    # Build room type condition
+    # Build conditions
     room_type_condition = ""
+    rate_code_condition = ""
     params = [start_date, end_date]
+
     if room_type:
         room_type_condition = "AND inv.room_type = %s"
         params.append(room_type)
+
+    if rate_code:
+        rate_code_condition = """
+        AND EXISTS (
+            SELECT 1 FROM `tabRoom Type Inventory Rate Code` irc
+            WHERE irc.parent = inv.name
+            AND irc.rate_code = %s
+        )
+        """
+        params.append(rate_code)
 
     # Main data query with grouping
     data_sql = f"""
@@ -569,7 +595,7 @@ def get_availability_grid_simple(start_date: int, end_date: int, room_type: str 
             d.weekend_indr
         FROM room_type_inventory inv
         JOIN dates d ON d.for_date = inv.for_date
-        WHERE 1=1 {room_type_condition}
+        WHERE 1=1 {room_type_condition} {rate_code_condition}
     )
     SELECT
         room_type,
@@ -655,9 +681,14 @@ def get_availability_grid_simple(start_date: int, end_date: int, room_type: str 
         "columns": columns,
         "data": data,
         "total_room_types": len(data),
-        "total_days": len(date_columns)
+        "total_days": len(date_columns),
+        "filters_applied": {
+            "room_type": room_type,
+            "rate_code": rate_code,
+            "start_date": start_date,
+            "end_date": end_date
+        }
     }
-
 
 # Alternative simpler version that just returns raw data for custom rendering
 @frappe.whitelist(allow_guest=True, methods=["GET"])
@@ -790,8 +821,11 @@ def get_room_type_inventory_rates(room_type=None, start_date=None, end_date=None
 
 @frappe.whitelist()
 def seed_room_type_inventory_rate_codes(rate_code, room_type, start_date, end_date, price):
-    frappe.db.sql("""
-        CALL seed_room_type_inventory_rate_codes(%s, %s, %s, %s, %s)
-    """, (rate_code, room_type, start_date, end_date, price))
-    frappe.db.commit()
+    params = (rate_code, room_type, start_date, end_date, price)
+    query = "CALL seed_room_type_inventory_rate_codes(%s, %s, %s, %s, %s)"
+    conn = frappe.db.get_connection()
+    cur = conn.cursor(pymysql.cursors.DictCursor)  # new cursor
+    cur.execute(query, params)
+    conn.commit()
+    cur.close()
     return {"ok": True}
