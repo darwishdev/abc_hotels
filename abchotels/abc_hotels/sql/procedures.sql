@@ -323,7 +323,27 @@ BEGIN
   SELECT ROW_COUNT() AS affected_rows;
 END$$
 
-
+DROP PROCEDURE switch_night_candidates;
+CREATE PROCEDURE switch_night_candidates(p_audit_date DATE)
+BEGIN
+    SELECT
+        r.name                AS reservation_id,
+        f.name                AS folio_id,
+        fw.name               AS folio_window_id,
+        inv.name              AS invoice_id,
+        r.base_rate_per_night AS nightly_rate,
+        r.customer            AS customer_id
+    FROM `tabHotel Reservation` r
+    JOIN `tabFolio` f
+      ON f.linked_reservation = r.name AND f.folio_status = 'Open'
+    JOIN `tabFolio Window` fw
+      ON fw.parent = f.name AND fw.window_code = '01'
+    JOIN `tabPOS Invoice` inv
+      ON inv.folio = f.name
+    WHERE r.check_in_completed = 1
+      AND r.check_out_completed = 0
+      AND p_audit_date BETWEEN r.check_in_date AND r.check_out_date;
+END$$
  --    CALL seed_room_type_inventory(
  --     20250829,          -- inclusive
  --     20251231,          -- inclusive

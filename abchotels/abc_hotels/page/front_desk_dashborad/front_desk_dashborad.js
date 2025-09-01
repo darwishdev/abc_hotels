@@ -5,7 +5,8 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
         single_column: true,
     });
 
-    $(wrapper).html(`
+    // 🔹 Page body instead of overwriting wrapper
+    page.body.html(`
     <style>
       .kpi-grid {
         display: grid;
@@ -31,6 +32,7 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
     </div>
   `);
 
+    // 🔹 Date filter
     const filter = page.add_field({
         fieldtype: "Date",
         fieldname: "as_of_date",
@@ -40,6 +42,32 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
         change: () => loadData(),
     });
 
+    // 🔹 Switch Night button
+    page.add_inner_button(__("Switch Night"), () => {
+        frappe.confirm(__("Are you sure you want to run Night Audit?"), () => {
+            frappe.call({
+                method: "abchotels.abc_hotels.api.reservation.run_night_audit",
+                args: { audit_date: filter.get_value() },
+                callback: function (r) {
+                    if (r.message && r.message.ok) {
+                        frappe.show_alert({
+                            message: __("Night Audit completed for {0}", [r.message.audit_date]),
+                            indicator: "green",
+                        });
+                        loadData();
+                    } else {
+                        frappe.msgprint({
+                            title: __("Night Audit Failed"),
+                            message: __("Please check server logs."),
+                            indicator: "red",
+                        });
+                    }
+                },
+            });
+        });
+    });
+
+    // 🔹 Load KPI data
     function loadData() {
         const dateStr = filter.get_value(); // YYYY-MM-DD
         const dateInt = cint(dateStr.replace(/-/g, "")); // 20250831
@@ -55,6 +83,7 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
         });
     }
 
+    // 🔹 Render KPI cards
     function render(data) {
         page.set_indicator(
             __("As of {0}", [frappe.datetime.global_date_format(data.as_of_date)]),
@@ -87,7 +116,7 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
             ].join(""),
         );
 
-        // add click actions for arrivals/departures
+        // 🔹 Click actions
         $(".kpi-card[data-click='arrivals']").on("click", () => {
             frappe.set_route("List", "Hotel Reservation", {
                 check_in_date: data.as_of_date,

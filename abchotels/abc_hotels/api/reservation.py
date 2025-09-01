@@ -1,5 +1,10 @@
 import frappe
+
+import pymysql.cursors
+from frappe import _
+from frappe.utils import nowdate
 from frappe.utils import today
+from frappe.utils import today, getdate
 
 @frappe.whitelist()
 def check_in(reservation_id):
@@ -7,6 +12,43 @@ def check_in(reservation_id):
     # create new folio and sales invoice with empty items
     try:
         frappe.db.sql("CALL reservation_create_folio(%s)" , reservation_id)
+
+        # 2) Get new folio id (your SP uses CONCAT('f-', reservation_name))
+        folio_id = f"f-{reservation_id}"
+
+        # 3) Load reservation again (status + fields updated by SP)
+        reservation = frappe.get_doc("Hotel Reservation", reservation_id)
+
+        # 4) Create POS Invoice linked to Folio
+        invoice_id = f"{reservation.name}-{folio_id}"
+        if frappe.db.exists("POS Invoice", invoice_id):
+            invoice_doc = frappe.get_doc("POS Invoice", invoice_id)
+        else:
+            invoice_doc = frappe.new_doc("POS Invoice")
+            invoice_doc.name = invoice_id
+            invoice_doc.update_stock = False
+            invoice_doc.taxes_and_charges = 'Egypt Hospitality - CH'
+            invoice_doc.customer = reservation.customer  # from Hotel Reservation
+            invoice_doc.posting_date = nowdate()
+            invoice_doc.is_pos = 1
+            invoice_doc.folio = folio_id   # 🔹 your custom Link field
+            invoice_doc.set("items", [{
+                "item_code": "Folio Initial Item",
+                "item_name": "Folio Initial Item",
+                "qty": 1,
+                "rate": 0,
+                "uom": "Nos",
+                "is_free_item" : True,
+                "income_account" : "4110 - Sales - CH"
+            }])
+            invoice_doc.set_missing_values()
+            invoice_doc.insert(ignore_permissions=True)
+
+        # 5) Update Room status
+        if reservation.room_type_room:
+            frappe.db.set_value("Room Type Room", reservation.room_type_room, "room_status", "Occupied")
+
+        frappe.db.commit()
     except Exception as e:
         raise e
     return f"Hello World from {reservation_id}"
@@ -39,7 +81,7 @@ def set_room_type_assigned(self):
 
 
 @frappe.whitelist()
-def get_dashboard_data(as_of_date=None):
+def get_dashboard_data(as_of_date):
     """
     Args:
         as_of_date: int date format YYYYMMDD (e.g., 20250831)
@@ -90,4 +132,55 @@ def get_dashboard_data(as_of_date=None):
             "arrivals": arrivals,
             "departures": departures,
         }
+    }
+
+
+@frappe.whitelist()
+def run_night_audit(audit_date=None):
+    audit_date = audit_date or today()
+    audit_date_int = int(getdate(audit_date).strftime("%Y%m%d"))  # convert to int YYYYMMDD
+
+    query = "CALL switch_night_candidates(%s)"
+    conn = frappe.db.get_connection()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(query, (audit_date,))
+    rows = cur.fetchall()
+    cur.close()
+
+    processed = []
+    for row in rows:
+        invoice = frappe.get_doc("POS Invoice", row["invoice_id"])
+
+        # check if ROOM-ACCOM for this date already exists
+        exists_for_date = any(
+            it.item_code == "ROOM-ACCOM"
+            and it.folio_window == row["folio_window_id"]
+            and it.for_date == audit_date_int
+            for it in invoice.items
+        )
+
+        if not exists_for_date:
+            invoice.append("items", {
+                "item_code": "ROOM-ACCOM",
+                "item_name": "Room Accommodation",
+                "folio_window": row["folio_window_id"],
+                "qty": 1,
+                "rate": row["nightly_rate"],
+                "uom": "Nos",
+                "for_date": audit_date_int,
+            })
+
+        # recalc + save
+        invoice.set_missing_values()
+        invoice.calculate_taxes_and_totals()
+        invoice.save()
+        frappe.db.commit()
+
+        processed.append(invoice.name)
+
+    return {
+        "ok": True,
+        "audit_date": audit_date,
+        "processed": processed,
+        "count": len(processed),
     }

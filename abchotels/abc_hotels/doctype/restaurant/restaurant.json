@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "property",
+  "default_tax_template",
   "column_break_ommv",
   "description"
  ],
@@ -27,12 +28,18 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
+  },
+  {
+   "fieldname": "default_tax_template",
+   "fieldtype": "Link",
+   "label": "Default Tax Template",
+   "options": "Sales Taxes and Charges"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-23 06:09:19.321697",
+ "modified": "2025-08-31 22:38:54.924845",
  "modified_by": "Administrator",
  "module": "ABC Hotels",
  "name": "Restaurant",

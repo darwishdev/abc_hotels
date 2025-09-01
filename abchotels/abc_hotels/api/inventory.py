@@ -390,6 +390,126 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
 
     return {"columns": columns, "data": payload_rows}
 
+@frappe.whitelist()
+def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: str = None):
+    """
+    Return room type rates grid with SQL doing heavy lifting.
+    Similar structure to get_availability_grid_simple but for pricing data.
+    """
+
+    # First, get columns from dim_date
+    columns_sql = """
+    WITH dates AS (
+        SELECT
+            for_date,
+            CONCAT(LEFT(day_name, 3), '<br/>', LPAD(day_of_month, 2, '0')) AS formatted_date,
+            day_name,
+            day_of_month,
+            weekend_indr
+        FROM dim_date
+        WHERE for_date BETWEEN %s AND %s
+        ORDER BY for_date
+    )
+    SELECT
+        for_date,
+        formatted_date,
+        weekend_indr
+    FROM dates
+    """
+
+    date_columns = frappe.db.sql(columns_sql, (start_date_int, end_date_int), as_dict=True)
+
+    # Build room type condition
+    room_type_condition = ""
+    params = [start_date_int, end_date_int]
+    if room_type:
+        room_type_condition = "AND inv.room_type = %s"
+        params.append(room_type)
+
+    # Main data query with grouping by rate_code
+    data_sql = f"""
+    WITH dates AS (
+        SELECT
+            for_date,
+            CONCAT(LEFT(day_name, 3), '<br/>', LPAD(day_of_month, 2, '0')) AS formatted_date,
+            day_name,
+            day_of_month,
+            weekend_indr
+        FROM dim_date
+        WHERE for_date BETWEEN %s AND %s
+    ),
+    rates_data AS (
+        SELECT
+            irc.rate_code,
+            inv.for_date,
+            irc.rate_price,
+            inv.room_type,
+            d.formatted_date,
+            d.weekend_indr
+        FROM `tabRoom Type Inventory` inv
+        JOIN `tabRoom Type Inventory Rate Code` irc ON inv.name = irc.parent
+        JOIN dates d ON d.for_date = inv.for_date
+        WHERE 1=1 {room_type_condition}
+    )
+    SELECT
+        rate_code,
+        JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'for_date', for_date,
+                'rate_price', rate_price,
+                'room_type', room_type,
+                'formatted_date', formatted_date,
+                'weekend_indr', weekend_indr
+            ) ORDER BY for_date
+        ) AS days_data
+    FROM rates_data
+    GROUP BY rate_code
+    ORDER BY rate_code
+    """
+
+    grouped_data = frappe.db.sql(data_sql, params, as_dict=True)
+
+    # Build columns structure
+    columns = [{"label": "Rate Code", "fieldname": "rate_code", "width": 200}]
+
+    for col in date_columns:
+        columns.append({
+            "label": col["formatted_date"],
+            "fieldname": f"date_{col['for_date']}",
+            "width": 120,
+            "is_weekend": bool(col["weekend_indr"])
+        })
+
+    # Build data structure
+    data = {}
+
+    for rate_row in grouped_data:
+        rate_code = rate_row["rate_code"]
+        days_data = frappe.parse_json(rate_row["days_data"]) if rate_row["days_data"] else []
+
+        # Create rate code entry
+        data[rate_code] = []
+
+        for day in days_data:
+            rate_price = day["rate_price"] or 0
+            is_weekend = day["weekend_indr"]
+            room_type_name = day["room_type"]
+
+            data[rate_code].append({
+                "for_date": day["for_date"],
+                "rate_price": rate_price,
+                "room_type": room_type_name,
+                "formatted_date": day["formatted_date"],
+                "is_weekend": bool(is_weekend)
+            })
+
+    return {
+        "columns": columns,
+        "data": data,
+        "total_rate_codes": len(data),
+        "total_days": len(date_columns)
+    }
+
 @frappe.whitelist(allow_guest=True, methods=["GET"])
 def get_availability_grid_simple(start_date: int, end_date: int, room_type: str = None):
     """
@@ -634,3 +754,44 @@ def reallocate_inventory_from_assignments(reservation_name: str):
     finally:
         cur.close()
     return result  # e.g. [{'status':'REALLOCATED'}] / [{'status':'NO_CHANGE'}] / [{'status':'NO_ASSIGNMENTS'}]
+
+
+
+
+@frappe.whitelist()
+def get_room_type_inventory_rates(room_type=None, start_date=None, end_date=None):
+    """
+    Get room type inventory rates with optional filters.
+    If a parameter is NULL, COALESCE will fallback to the column itself,
+    meaning the condition is always true (no filter).
+    """
+    rows = frappe.db.sql("""
+        SELECT
+            inv.for_date,
+            inv.room_type,
+            irc.rate_code,
+            irc.rate_price
+        FROM `tabRoom Type Inventory` inv
+        JOIN `tabRoom Type Inventory Rate Code` irc
+          ON inv.name = irc.parent
+        WHERE inv.room_type = COALESCE(%(room_type)s, inv.room_type)
+          AND inv.for_date BETWEEN COALESCE(%(start_date)s, inv.for_date)
+                               AND COALESCE(%(end_date)s, inv.for_date)
+        ORDER BY inv.for_date, irc.rate_code
+    """, {
+        "room_type": room_type,
+        "start_date": start_date,
+        "end_date": end_date
+    }, as_dict=True)
+
+    return rows
+
+
+
+@frappe.whitelist()
+def seed_room_type_inventory_rate_codes(rate_code, room_type, start_date, end_date, price):
+    frappe.db.sql("""
+        CALL seed_room_type_inventory_rate_codes(%s, %s, %s, %s, %s)
+    """, (rate_code, room_type, start_date, end_date, price))
+    frappe.db.commit()
+    return {"ok": True}

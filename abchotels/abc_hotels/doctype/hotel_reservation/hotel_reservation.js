@@ -41,11 +41,32 @@ frappe.ui.form.on("Hotel Reservation", {
             addAvailibilityButton(frm);
         }
     },
+    room_type_room: function (frm) {
+        console.log("frm2", frm.doc.room_type_room);
+        if (frm.doc.room_type_room) {
+            console.log("frm", frm.doc.room_type_room);
+            frappe.db
+                .get_value("Room Type Room", frm.doc.room_type_room, "room_type")
+                .then((r) => {
+                    console.log("frmr", r);
+                    if (r.message && r.message.room_type) {
+                        frm.set_value("room_type_assigned", r.message.room_type);
+                    } else {
+                        frm.set_value("room_type_assigned", "");
+                    }
+                });
+        } else {
+            frm.set_value("room_type_assigned", "");
+        }
+    },
     refresh(frm) {
         // Optional: hide the HTML placeholder until needed
         hide_availability(frm);
         console.log("frm status", frm.doc, frm.doc, frm.docroom_type_room);
-        const showCheckIn = frm.doc.docstatus == 1;
+        const isSubmitted = frm.doc.docstatus === 1;
+        const isToday = frm.doc.check_in_date === frappe.datetime.get_today();
+        const notCheckedIn = !frm.doc.check_in_completed;
+        const showCheckIn = isSubmitted && isToday && notCheckedIn;
         if (showCheckIn) {
             frm.add_custom_button("Check In", function () {
                 frappe.call({
@@ -54,6 +75,39 @@ frappe.ui.form.on("Hotel Reservation", {
                         reservation_id: frm.doc.name,
                     },
                     callback: function (r) {
+                        if (r.message) {
+                            // 1) update Room Type Room
+                            if (frm.doc.room_type_room) {
+                                frappe.call({
+                                    method: "frappe.client.set_value",
+                                    args: {
+                                        doctype: "Room Type Room",
+                                        name: frm.doc.room_type_room,
+                                        fieldname: { room_status: "Occupied" },
+                                    },
+                                    callback: function () {
+                                        // 2) update Hotel Reservation (check_in_completed=1)
+                                        frappe.call({
+                                            method: "frappe.client.set_value",
+                                            args: {
+                                                doctype: "Hotel Reservation",
+                                                name: frm.doc.name,
+                                                fieldname: { check_in_completed: 1 },
+                                            },
+                                            callback: function () {
+                                                frappe.show_alert({
+                                                    message: __("Guest Checked In Successfully"),
+                                                    indicator: "green",
+                                                });
+                                                frm.reload_doc(); // refresh UI
+                                            },
+                                        });
+                                    },
+                                });
+                            }
+                        } else {
+                            frappe.msgprint(__("No response from server"));
+                        }
                         if (r.message) {
                             console.log(r.message);
                         } else {

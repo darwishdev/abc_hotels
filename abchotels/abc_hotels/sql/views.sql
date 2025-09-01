@@ -11,7 +11,7 @@ COUNT(r.name) total_count,
 (COUNT(r.name) - (inv.out_of_order_count + inv.occupied_count)) total_available_units
 from `tabRoom Type Inventory` inv
  join `tabRoom Type` rt on rt.name = inv.room_type
- join `tabRoom Type Room` r on rt.name = r.room_type_name
+ join `tabRoom Type Room` r on rt.name = r.room_type
  group by
 inv.name ,
 inv.for_date ,
