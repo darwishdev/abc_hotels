@@ -154,6 +154,101 @@ BEGIN
   SELECT COUNT(*) AS rows_touched, SUM(delta) AS total_delta
   FROM tmp_inv_delta;
 END $$
+DROP PROCEDURE IF EXISTS seed_room_type_inventory_rate_codes $$
+CREATE PROCEDURE seed_room_type_inventory_rate_codes(
+  IN p_rate_code VARCHAR(255),
+  IN p_room_type VARCHAR(255),
+  IN p_start     DATE,          -- inclusive
+  IN p_end       DATE,          -- inclusive
+  IN p_price     DECIMAL(10,2)  -- price
+)
+BEGIN
+  /* Insert rows for the date range; if (parent, rate_code) exists, update price */
+  INSERT INTO `tabRoom Type Inventory Rate Code` (name, parent, rate_code, rate_price)
+  SELECT
+      CONCAT(inv.name, '-', p_rate_code),  -- unique name
+      inv.name,
+      p_rate_code,
+      p_price
+  FROM `tabRoom Type Inventory` AS inv
+  WHERE inv.for_date BETWEEN p_start AND p_end
+    AND inv.room_type = p_room_type
+
+  ON DUPLICATE KEY UPDATE
+      rate_price = VALUES(rate_price);
+
+  /* Report how many rows were affected (note: updates count as 2 if changed) */
+  SELECT ROW_COUNT() AS affected_rows;
+END$$
+
+DROP PROCEDURE IF EXISTS seed_room_type_inventory_rate_codes $$
+CREATE PROCEDURE seed_room_type_inventory_rate_codes(
+  IN p_rate_code VARCHAR(255),
+  IN p_room_type VARCHAR(255),
+  IN p_start     DATE,          -- inclusive
+  IN p_end       DATE,          -- inclusive
+  IN p_price     DECIMAL(10,2)  -- price
+)
+BEGIN
+  /* Insert rows for the date range; if (parent, rate_code) exists, update price */
+  INSERT INTO `tabRoom Type Inventory Rate Code` (name, parent, rate_code, rate_price)
+  SELECT
+      CONCAT(inv.name, '-', p_rate_code),  -- unique name
+      inv.name,
+      p_rate_code,
+      p_price
+  FROM `tabRoom Type Inventory` AS inv
+  WHERE inv.for_date BETWEEN p_start AND p_end
+    AND inv.room_type = p_room_type
+
+  ON DUPLICATE KEY UPDATE
+      rate_price = VALUES(rate_price);
+
+  /* Report how many rows were affected (note: updates count as 2 if changed) */
+  SELECT ROW_COUNT() AS affected_rows;
+END$$
+
+DROP PROCEDURE IF EXISTS switch_night_candidates $$
+CREATE PROCEDURE switch_night_candidates(p_audit_date DATE)
+BEGIN
+    SELECT
+        r.name                AS reservation_id,
+        f.name                AS folio_id,
+        fw.name               AS folio_window_id,
+        inv.name              AS invoice_id,
+        r.base_rate_per_night AS nightly_rate,
+        r.customer            AS customer_id
+    FROM `tabHotel Reservation` r
+    JOIN `tabFolio` f
+      ON f.linked_reservation = r.name AND f.folio_status = 'Open'
+    JOIN `tabFolio Window` fw
+      ON fw.parent = f.name AND fw.window_code = '01'
+    JOIN `tabPOS Invoice` inv
+      ON inv.folio = f.name
+    WHERE r.check_in_completed = 1
+      AND r.check_out_completed = 0
+      AND p_audit_date BETWEEN r.check_in_date AND r.check_out_date;
+END$$
+ --    CALL seed_room_type_inventory(
+ --     20250829,          -- inclusive
+ --     20251231,          -- inclusive
+ --     50,           -- window size, e.g. 30
+ --     'I-'    -- e.g. 'INVE-'
+ --   )$$
+ --   CALL seed_room_type_inventory_rate_codes(
+ --   'RACK',
+ --   'Superior Bungalows King',
+ --     20250829,
+ --     20251231,
+ --     15000
+ --   )$$
+ --   CALL seed_room_type_inventory_rate_codes(
+ --   'RACK',
+ --   'Superior Bungalows Twin',
+ --     20250829,
+--     20251231,
+--     13000
+--   )$$
 DROP PROCEDURE IF EXISTS seed_dim_date;
 CREATE PROCEDURE seed_dim_date(
   IN p_start DATE,
@@ -269,99 +364,5 @@ BEGIN
   SET time_zone = old_tz;
 END$$
 
-DROP PROCEDURE IF EXISTS seed_room_type_inventory_rate_codes $$
-CREATE PROCEDURE seed_room_type_inventory_rate_codes(
-  IN p_rate_code VARCHAR(255),
-  IN p_room_type VARCHAR(255),
-  IN p_start     DATE,          -- inclusive
-  IN p_end       DATE,          -- inclusive
-  IN p_price     DECIMAL(10,2)  -- price
-)
-BEGIN
-  /* Insert rows for the date range; if (parent, rate_code) exists, update price */
-  INSERT INTO `tabRoom Type Inventory Rate Code` (name, parent, rate_code, rate_price)
-  SELECT
-      CONCAT(inv.name, '-', p_rate_code),  -- unique name
-      inv.name,
-      p_rate_code,
-      p_price
-  FROM `tabRoom Type Inventory` AS inv
-  WHERE inv.for_date BETWEEN p_start AND p_end
-    AND inv.room_type = p_room_type
 
-  ON DUPLICATE KEY UPDATE
-      rate_price = VALUES(rate_price);
-
-  /* Report how many rows were affected (note: updates count as 2 if changed) */
-  SELECT ROW_COUNT() AS affected_rows;
-END$$
-
-DROP PROCEDURE IF EXISTS seed_room_type_inventory_rate_codes $$
-CREATE PROCEDURE seed_room_type_inventory_rate_codes(
-  IN p_rate_code VARCHAR(255),
-  IN p_room_type VARCHAR(255),
-  IN p_start     DATE,          -- inclusive
-  IN p_end       DATE,          -- inclusive
-  IN p_price     DECIMAL(10,2)  -- price
-)
-BEGIN
-  /* Insert rows for the date range; if (parent, rate_code) exists, update price */
-  INSERT INTO `tabRoom Type Inventory Rate Code` (name, parent, rate_code, rate_price)
-  SELECT
-      CONCAT(inv.name, '-', p_rate_code),  -- unique name
-      inv.name,
-      p_rate_code,
-      p_price
-  FROM `tabRoom Type Inventory` AS inv
-  WHERE inv.for_date BETWEEN p_start AND p_end
-    AND inv.room_type = p_room_type
-
-  ON DUPLICATE KEY UPDATE
-      rate_price = VALUES(rate_price);
-
-  /* Report how many rows were affected (note: updates count as 2 if changed) */
-  SELECT ROW_COUNT() AS affected_rows;
-END$$
-
-DROP PROCEDURE switch_night_candidates;
-CREATE PROCEDURE switch_night_candidates(p_audit_date DATE)
-BEGIN
-    SELECT
-        r.name                AS reservation_id,
-        f.name                AS folio_id,
-        fw.name               AS folio_window_id,
-        inv.name              AS invoice_id,
-        r.base_rate_per_night AS nightly_rate,
-        r.customer            AS customer_id
-    FROM `tabHotel Reservation` r
-    JOIN `tabFolio` f
-      ON f.linked_reservation = r.name AND f.folio_status = 'Open'
-    JOIN `tabFolio Window` fw
-      ON fw.parent = f.name AND fw.window_code = '01'
-    JOIN `tabPOS Invoice` inv
-      ON inv.folio = f.name
-    WHERE r.check_in_completed = 1
-      AND r.check_out_completed = 0
-      AND p_audit_date BETWEEN r.check_in_date AND r.check_out_date;
-END$$
- --    CALL seed_room_type_inventory(
- --     20250829,          -- inclusive
- --     20251231,          -- inclusive
- --     50,           -- window size, e.g. 30
- --     'I-'    -- e.g. 'INVE-'
- --   )$$
- --   CALL seed_room_type_inventory_rate_codes(
- --   'RACK',
- --   'Superior Bungalows King',
- --     20250829,
- --     20251231,
- --     15000
- --   )$$
- --   CALL seed_room_type_inventory_rate_codes(
- --   'RACK',
- --   'Superior Bungalows Twin',
- --     20250829,
---     20251231,
---     13000
---   )$$
 DELIMITER ;
