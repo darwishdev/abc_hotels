@@ -88,7 +88,8 @@ BEGIN
     AVG(r.rate_price)            AS rate_per_night,
     SUM(r.rate_price)            AS total_stay
   FROM room_type_inventory_rates r
-  WHERE r.for_date BETWEEN p_start AND p_end
+    WHERE r.for_date >= p_start
+      AND r.for_date < p_end
     -- Match rate codes if param not empty
     AND (p_rate_codes_csv IS NULL OR p_rate_codes_csv = '' OR FIND_IN_SET(r.rate_code, p_rate_codes_csv))
     -- Match room types if param not empty
@@ -222,7 +223,7 @@ BEGIN
     JOIN `tabFolio` f
       ON f.linked_reservation = r.name AND f.folio_status = 'Open'
     JOIN `tabFolio Window` fw
-      ON fw.parent = f.name AND fw.window_code = '01'
+      ON fw.parent = f.name AND (fw.window_code = '01' OR fw.window_code = '1' )
     JOIN `tabPOS Invoice` inv
       ON inv.folio = f.name
     WHERE r.check_in_completed = 1

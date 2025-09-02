@@ -7,6 +7,7 @@
  "field_order": [
   "horizon_start_date",
   "inventory_auto_reflect",
+  "business_date",
   "column_break_ijvz",
   "horizon_end_date",
   "inventory_chunk_size"
@@ -40,13 +41,19 @@
    "fieldname": "inventory_chunk_size",
    "fieldtype": "Int",
    "label": "Inventory Chunk Size"
+  },
+  {
+   "fieldname": "business_date",
+   "fieldtype": "Date",
+   "label": "Business Date",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-08-21 23:25:59.443442",
+ "modified": "2025-09-02 14:28:48.579605",
  "modified_by": "Administrator",
  "module": "ABC Hotels",
  "name": "ABC Hotels Settings",

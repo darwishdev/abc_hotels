@@ -42,6 +42,22 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
         change: () => loadData(),
     });
 
+    // Load business_date from settings
+    frappe.call({
+        method: "frappe.client.get_value",
+        args: {
+            doctype: "ABC Hotels Settings",
+            fieldname: "business_date",
+        },
+        callback: function (r) {
+            if (r.message && r.message.business_date) {
+                filter.set_value(r.message.business_date);
+                loadData(); // initial load after setting value
+            } else {
+                frappe.msgprint(__("Business Date is not set in ABC Hotels Settings"));
+            }
+        },
+    });
     // 🔹 Switch Night button
     page.add_inner_button(__("End Of Day"), () => {
         frappe.confirm(__("Are you sure you want to run Night Audit?"), () => {

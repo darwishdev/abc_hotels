@@ -4,8 +4,7 @@ import pymysql.cursors
 from frappe import _
 from frappe.utils import nowdate
 from frappe.utils import today
-from frappe.utils import today, getdate
-
+from frappe.utils import today, getdate, add_days
 @frappe.whitelist()
 def check_in(reservation_id):
     # For now just return hello world
@@ -157,8 +156,16 @@ def get_night_audit_candidates(audit_date=None):
     }
 @frappe.whitelist()
 def run_night_audit(audit_date=None):
-    audit_date = audit_date or today()
-    audit_date_int = int(getdate(audit_date).strftime("%Y%m%d"))  # convert to int YYYYMMDD
+
+    settings = frappe.get_single("ABC Hotels Settings")
+    s_audit_date =  settings.business_date
+    if not s_audit_date:
+        frappe.throw("Business Date is not set in ABC Hotels Settings")
+
+    if audit_date:
+        s_audit_date = audit_date
+
+    audit_date_int = int(getdate(s_audit_date).strftime("%Y%m%d"))  # convert to int YYYYMMDD
 
     query = "CALL switch_night_candidates(%s)"
     conn = frappe.db.get_connection()
@@ -197,7 +204,10 @@ def run_night_audit(audit_date=None):
         frappe.db.commit()
 
         processed.append(invoice.name)
-
+   # 3. Advance business_date by 1 day
+    settings.business_date = add_days(getdate(audit_date), 1)
+    settings.save(ignore_permissions=True)
+    frappe.db.commit()
     return {
         "ok": True,
         "audit_date": audit_date,

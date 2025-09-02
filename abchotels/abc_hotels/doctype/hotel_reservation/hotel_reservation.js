@@ -515,7 +515,7 @@ function render_availability_table(frm, rows, ctx) {
     }
     .avail-card .hd {
       padding:12px 16px;
-      background:linear-gradient(135deg,#2563eb,#3b82f6);
+    background: black;
       color:#fff; font-weight:600;
       display:flex; justify-content:space-between; align-items:center;
     }
@@ -537,7 +537,7 @@ function render_availability_table(frm, rows, ctx) {
     .rate-total { font-size:13px; color:#6b7280; }
     .btn-xs {
       padding:4px 10px; font-size:12px; border-radius:6px;
-      background:#2563eb; color:#fff; border:none; cursor:pointer; transition:background .2s;
+        margin-inline:10px;
     }
     .btn-xs:hover { background:#1d4ed8; }
   </style>
@@ -565,8 +565,7 @@ function render_availability_table(frm, rows, ctx) {
               <div class="rate-row">
                 <div class="rate-name">${frappe.utils.escape_html(rate.rate_code)}</div>
                 <div class="rate-price">${format_currency_safe(rate.rate_per_night)}</div>
-                <div class="rate-total">${format_currency_safe(rate.total_stay)}</div>
-                <button class="btn-xs select-rate"
+                <button style="margin-inline:2px" class="btn-xs select-rate"
                         data-room="${room.room_type}"
                         data-index="${j}">Select</button>
               </div>
