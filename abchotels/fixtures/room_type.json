@@ -7,14 +7,14 @@
   "is_closed": 0,
   "maximum_guests_number": 2,
   "minimum_guests_number": 1,
-  "modified": "2025-08-28 10:33:48.711458",
-  "name": "Standard Bungalows Twin",
+  "modified": "2025-09-05 12:35:57.855976",
+  "name": "Premium King bed",
   "pay_master": 0,
   "room_category": "Bungalows",
   "room_type_amenities": [],
   "room_type_description": null,
   "room_type_image": null,
-  "unit_area": 20.0
+  "unit_area": 59.0
  },
  {
   "base_price": 0.0,
@@ -24,13 +24,109 @@
   "is_closed": 0,
   "maximum_guests_number": 2,
   "minimum_guests_number": 1,
-  "modified": "2025-08-31 15:06:35.356465",
-  "name": "Superior Bungalows King",
+  "modified": "2025-09-05 12:54:00.104816",
+  "name": "Superior King bed",
   "pay_master": 0,
   "room_category": "Bungalows",
+  "room_type_amenities": [
+   {
+    "amenity": null,
+    "parent": "Superior King bed",
+    "parentfield": "room_type_amenities",
+    "parenttype": "Room Type"
+   }
+  ],
+  "room_type_description": null,
+  "room_type_image": null,
+  "unit_area": 59.0
+ },
+ {
+  "base_price": 0.0,
+  "bathrooms_count": 1,
+  "docstatus": 0,
+  "doctype": "Room Type",
+  "is_closed": 0,
+  "maximum_guests_number": 2,
+  "minimum_guests_number": 1,
+  "modified": "2025-09-05 12:54:09.538055",
+  "name": "Superior Twin bed",
+  "pay_master": 0,
+  "room_category": "Bungalows",
+  "room_type_amenities": [
+   {
+    "amenity": null,
+    "parent": "Superior Twin bed",
+    "parentfield": "room_type_amenities",
+    "parenttype": "Room Type"
+   }
+  ],
+  "room_type_description": null,
+  "room_type_image": null,
+  "unit_area": 59.0
+ },
+ {
+  "base_price": 0.0,
+  "bathrooms_count": 1,
+  "docstatus": 0,
+  "doctype": "Room Type",
+  "is_closed": 0,
+  "maximum_guests_number": 2,
+  "minimum_guests_number": 1,
+  "modified": "2025-09-05 12:54:18.620260",
+  "name": "Deluxe King bed",
+  "pay_master": 0,
+  "room_category": "Bungalows",
+  "room_type_amenities": [
+   {
+    "amenity": null,
+    "parent": "Deluxe King bed",
+    "parentfield": "room_type_amenities",
+    "parenttype": "Room Type"
+   }
+  ],
+  "room_type_description": null,
+  "room_type_image": null,
+  "unit_area": 59.0
+ },
+ {
+  "base_price": 0.0,
+  "bathrooms_count": 1,
+  "docstatus": 0,
+  "doctype": "Room Type",
+  "is_closed": 0,
+  "maximum_guests_number": 2,
+  "minimum_guests_number": 1,
+  "modified": "2025-09-05 12:54:26.871386",
+  "name": "Deluxe Twin bed",
+  "pay_master": 0,
+  "room_category": "Bungalows",
+  "room_type_amenities": [
+   {
+    "amenity": null,
+    "parent": "Deluxe Twin bed",
+    "parentfield": "room_type_amenities",
+    "parenttype": "Room Type"
+   }
+  ],
+  "room_type_description": null,
+  "room_type_image": null,
+  "unit_area": 59.0
+ },
+ {
+  "base_price": 0.0,
+  "bathrooms_count": 0,
+  "docstatus": 0,
+  "doctype": "Room Type",
+  "is_closed": 0,
+  "maximum_guests_number": 2,
+  "minimum_guests_number": 1,
+  "modified": "2025-09-05 14:48:28.472843",
+  "name": "PM",
+  "pay_master": 1,
+  "room_category": "Pseudo Rooms",
   "room_type_amenities": [],
   "room_type_description": null,
   "room_type_image": null,
-  "unit_area": 40.0
+  "unit_area": 0.0
  }
 ]

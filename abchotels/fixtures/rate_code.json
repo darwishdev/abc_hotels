@@ -1,138 +1,77 @@
 [
  {
-  "abbriviation": "RUS",
-  "cacnelation_policy": "First Night Fee",
+  "abbriviation": "Rack",
+  "cacnelation_policy": "Non-refundable",
   "color": null,
-  "currency": "USD",
+  "currency": "EGP",
   "days_before_check_in": 0,
   "docstatus": 0,
   "doctype": "Rate Code",
   "flexible_to_ammend": 0,
-  "modified": "2025-08-31 14:24:39.360482",
-  "name": "RACK US",
+  "modified": "2025-09-05 14:43:21.695048",
+  "name": "RackEG",
   "pay_in_advance": 0,
   "rate_category": null,
-  "room_types": [
-   {
-    "parent": "RACK US",
-    "parentfield": "room_types",
-    "parenttype": "Rate Code",
-    "room_type": "Superior Bungalows King",
-    "valid_from": null,
-    "valid_to": null
-   },
-   {
-    "parent": "RACK US",
-    "parentfield": "room_types",
-    "parenttype": "Rate Code",
-    "room_type": "Standard Bungalows Twin",
-    "valid_from": null,
-    "valid_to": null
-   }
-  ],
-  "valid_from": "2025-08-29",
-  "valid_to": "2025-12-31"
+  "room_types": [],
+  "valid_from": "2025-09-01",
+  "valid_to": null
  },
  {
   "abbriviation": "BAR1",
-  "cacnelation_policy": "First Night Fee",
+  "cacnelation_policy": "Free Cancellation",
   "color": null,
   "currency": "EGP",
   "days_before_check_in": 0,
   "docstatus": 0,
   "doctype": "Rate Code",
   "flexible_to_ammend": 0,
-  "modified": "2025-08-31 15:35:33.231608",
-  "name": "BAR EGP",
+  "modified": "2025-09-05 14:44:58.758084",
+  "name": "BAR Egyptian - BB",
   "pay_in_advance": 0,
-  "rate_category": null,
+  "rate_category": "BAR",
   "room_types": [
    {
-    "parent": "BAR EGP",
+    "parent": "BAR Egyptian - BB",
     "parentfield": "room_types",
     "parenttype": "Rate Code",
-    "room_type": "Standard Bungalows Twin",
+    "room_type": "Premium King bed",
     "valid_from": null,
     "valid_to": null
    },
    {
-    "parent": "BAR EGP",
+    "parent": "BAR Egyptian - BB",
     "parentfield": "room_types",
     "parenttype": "Rate Code",
-    "room_type": "Superior Bungalows King",
-    "valid_from": null,
-    "valid_to": null
-   }
-  ],
-  "valid_from": "2025-08-31",
-  "valid_to": "2025-12-31"
- },
- {
-  "abbriviation": "BAR2",
-  "cacnelation_policy": "First Night Fee",
-  "color": null,
-  "currency": "USD",
-  "days_before_check_in": 0,
-  "docstatus": 0,
-  "doctype": "Rate Code",
-  "flexible_to_ammend": 0,
-  "modified": "2025-08-31 15:36:34.101910",
-  "name": "BAR USD",
-  "pay_in_advance": 0,
-  "rate_category": null,
-  "room_types": [
-   {
-    "parent": "BAR USD",
-    "parentfield": "room_types",
-    "parenttype": "Rate Code",
-    "room_type": "Standard Bungalows Twin",
+    "room_type": "Superior King bed",
     "valid_from": null,
     "valid_to": null
    },
    {
-    "parent": "BAR USD",
+    "parent": "BAR Egyptian - BB",
     "parentfield": "room_types",
     "parenttype": "Rate Code",
-    "room_type": "Superior Bungalows King",
-    "valid_from": null,
-    "valid_to": null
-   }
-  ],
-  "valid_from": "2025-08-31",
-  "valid_to": "2025-12-31"
- },
- {
-  "abbriviation": "R",
-  "cacnelation_policy": "First Night Fee",
-  "color": null,
-  "currency": "EGP",
-  "days_before_check_in": 0,
-  "docstatus": 0,
-  "doctype": "Rate Code",
-  "flexible_to_ammend": 0,
-  "modified": "2025-08-29 02:13:54.960212",
-  "name": "RACK",
-  "pay_in_advance": 0,
-  "rate_category": null,
-  "room_types": [
-   {
-    "parent": "RACK",
-    "parentfield": "room_types",
-    "parenttype": "Rate Code",
-    "room_type": "Superior Bungalows King",
+    "room_type": "Superior Twin bed",
     "valid_from": null,
     "valid_to": null
    },
    {
-    "parent": "RACK",
+    "parent": "BAR Egyptian - BB",
     "parentfield": "room_types",
     "parenttype": "Rate Code",
-    "room_type": "Standard Bungalows Twin",
+    "room_type": "Deluxe King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "BAR Egyptian - BB",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe Twin bed",
     "valid_from": null,
     "valid_to": null
    }
   ],
-  "valid_from": "2025-08-29",
+  "valid_from": "2025-08-01",
   "valid_to": "2025-12-31"
  }
 ]

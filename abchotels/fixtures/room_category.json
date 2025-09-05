@@ -2,8 +2,15 @@
  {
   "docstatus": 0,
   "doctype": "Room Category",
-  "modified": "2025-08-28 10:32:23.090844",
+  "modified": "2025-09-05 12:34:08.183103",
   "name": "Bungalows",
+  "property_name": "Concha Hotel"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Category",
+  "modified": "2025-09-05 14:47:02.151767",
+  "name": "Pseudo Rooms",
   "property_name": "Concha Hotel"
  }
 ]
