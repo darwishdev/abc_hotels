@@ -1,6 +1,6 @@
 [
  {
-  "abbriviation": "Rack",
+  "abbriviation": "RACK-EGP",
   "cacnelation_policy": "Non-refundable",
   "color": null,
   "currency": "EGP",
@@ -8,16 +8,65 @@
   "docstatus": 0,
   "doctype": "Rate Code",
   "flexible_to_ammend": 0,
-  "modified": "2025-09-05 14:43:21.695048",
+  "modified": "2025-09-05 15:06:12.949690",
   "name": "RackEG",
   "pay_in_advance": 0,
-  "rate_category": null,
-  "room_types": [],
+  "rate_category": "RACK",
+  "room_types": [
+   {
+    "parent": "RackEG",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Premium King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "RackEG",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "RackEG",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "RackEG",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "RackEG",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "RackEG",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "PM",
+    "valid_from": null,
+    "valid_to": null
+   }
+  ],
   "valid_from": "2025-09-01",
   "valid_to": null
  },
  {
-  "abbriviation": "BAR1",
+  "abbriviation": "BAR-EGP",
   "cacnelation_policy": "Free Cancellation",
   "color": null,
   "currency": "EGP",
@@ -25,7 +74,7 @@
   "docstatus": 0,
   "doctype": "Rate Code",
   "flexible_to_ammend": 0,
-  "modified": "2025-09-05 14:44:58.758084",
+  "modified": "2025-09-05 15:06:27.552149",
   "name": "BAR Egyptian - BB",
   "pay_in_advance": 0,
   "rate_category": "BAR",
@@ -67,6 +116,278 @@
     "parentfield": "room_types",
     "parenttype": "Rate Code",
     "room_type": "Deluxe Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "BAR Egyptian - BB",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "PM",
+    "valid_from": null,
+    "valid_to": null
+   }
+  ],
+  "valid_from": "2025-08-01",
+  "valid_to": "2025-12-31"
+ },
+ {
+  "abbriviation": "TAR-EGP",
+  "cacnelation_policy": "Free Cancellation",
+  "color": null,
+  "currency": "EGP",
+  "days_before_check_in": 0,
+  "docstatus": 0,
+  "doctype": "Rate Code",
+  "flexible_to_ammend": 0,
+  "modified": "2025-09-05 15:06:42.919744",
+  "name": "Travel Agent Rate",
+  "pay_in_advance": 0,
+  "rate_category": "TAR",
+  "room_types": [
+   {
+    "parent": "Travel Agent Rate",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Premium King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Travel Agent Rate",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Travel Agent Rate",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Travel Agent Rate",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Travel Agent Rate",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Travel Agent Rate",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "PM",
+    "valid_from": null,
+    "valid_to": null
+   }
+  ],
+  "valid_from": "2025-08-01",
+  "valid_to": "2025-12-31"
+ },
+ {
+  "abbriviation": "HUSE",
+  "cacnelation_policy": "Free Cancellation",
+  "color": null,
+  "currency": "EGP",
+  "days_before_check_in": 0,
+  "docstatus": 0,
+  "doctype": "Rate Code",
+  "flexible_to_ammend": 0,
+  "modified": "2025-09-05 15:07:30.140628",
+  "name": "House Use",
+  "pay_in_advance": 0,
+  "rate_category": "HUSE",
+  "room_types": [
+   {
+    "parent": "House Use",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Premium King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "House Use",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "House Use",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "House Use",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "House Use",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "House Use",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "PM",
+    "valid_from": null,
+    "valid_to": null
+   }
+  ],
+  "valid_from": "2025-08-01",
+  "valid_to": "2025-12-31"
+ },
+ {
+  "abbriviation": "COMP",
+  "cacnelation_policy": "Free Cancellation",
+  "color": null,
+  "currency": "EGP",
+  "days_before_check_in": 0,
+  "docstatus": 0,
+  "doctype": "Rate Code",
+  "flexible_to_ammend": 0,
+  "modified": "2025-09-05 15:07:58.463843",
+  "name": "Complimentary",
+  "pay_in_advance": 0,
+  "rate_category": "COMP",
+  "room_types": [
+   {
+    "parent": "Complimentary",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Premium King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Complimentary",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Complimentary",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Complimentary",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Complimentary",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Complimentary",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "PM",
+    "valid_from": null,
+    "valid_to": null
+   }
+  ],
+  "valid_from": "2025-08-01",
+  "valid_to": "2025-12-31"
+ },
+ {
+  "abbriviation": "PM",
+  "cacnelation_policy": "Free Cancellation",
+  "color": null,
+  "currency": "EGP",
+  "days_before_check_in": 0,
+  "docstatus": 0,
+  "doctype": "Rate Code",
+  "flexible_to_ammend": 0,
+  "modified": "2025-09-05 15:08:24.206275",
+  "name": "Paymaster",
+  "pay_in_advance": 0,
+  "rate_category": "PM",
+  "room_types": [
+   {
+    "parent": "Paymaster",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Premium King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Paymaster",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Paymaster",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Superior Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Paymaster",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe King bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Paymaster",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "Deluxe Twin bed",
+    "valid_from": null,
+    "valid_to": null
+   },
+   {
+    "parent": "Paymaster",
+    "parentfield": "room_types",
+    "parenttype": "Rate Code",
+    "room_type": "PM",
     "valid_from": null,
     "valid_to": null
    }

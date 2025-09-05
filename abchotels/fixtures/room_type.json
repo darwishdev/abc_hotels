@@ -128,5 +128,22 @@
   "room_type_description": null,
   "room_type_image": null,
   "unit_area": 0.0
+ },
+ {
+  "base_price": 0.0,
+  "bathrooms_count": 0,
+  "docstatus": 0,
+  "doctype": "Room Type",
+  "is_closed": 0,
+  "maximum_guests_number": 0,
+  "minimum_guests_number": 0,
+  "modified": "2025-09-05 14:49:30.942546",
+  "name": "PI",
+  "pay_master": 1,
+  "room_category": "Pseudo Rooms",
+  "room_type_amenities": [],
+  "room_type_description": null,
+  "room_type_image": null,
+  "unit_area": 0.0
  }
 ]
