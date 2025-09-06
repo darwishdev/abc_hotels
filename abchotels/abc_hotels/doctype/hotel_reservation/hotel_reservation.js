@@ -172,9 +172,15 @@ function set_checkout_date_restrictions(frm) {
 }
 
 function validate_check_in_date(frm) {
+
     if (!frm.doc.check_in_date) return;
 
-    const today = frappe.datetime.get_today();
+console.log(window.business_date , "vbdaaate    ");
+    const today = window.business_date;
+ // const business_date = await frappe.db.get_single_value(
+ //        "ABC Hotels Settings",
+ //        "business_date"
+ //    );
     const check_in = frm.doc.check_in_date;
 
     if (frappe.datetime.str_to_obj(check_in) < frappe.datetime.str_to_obj(today)) {

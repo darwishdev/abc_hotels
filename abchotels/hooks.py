@@ -11,7 +11,7 @@ app_email = "your.email@example.com"
 app_license = "MIT"
 
 app_include_css = "/assets/abchotels/css/abchotels.css"
-app_include_js = ["/assets/abchotels/js/abchotels.js" , "abchotels/abc_hotels/page/hotel_availability_dashboard/hotel_availability_dashboard.js"]
+app_include_js = ["/assets/abchotels/js/abchotels.js"]
 
 desk_page = {"ABC Hotels": "abchotels/workspace/abc_hotels"}
 
@@ -26,42 +26,14 @@ after_migrate = "abchotels.setup.installer.after_migrate"
 
 
 fixtures = [
-	{
-		"doctype": "Room Type"
-	},
-	{
-		"doctype": "Cancelation Policy"
-	},
-	{
-		"doctype": "Rate Code"
-	},
-	{
-		"doctype": "Room Type Inventory"
-	},
-	{
-		"doctype": "Property"
-	},
-	{
-		"doctype": "Room Type Room"
-	},
-	{
-		"doctype": "Amenity"
-	},
-	{
-		"doctype": "Room Category"
-	},
-	{
-		"doctype": "Bed Type"
-	},
-
-	{
-		"doctype": "Workspace",
-		"filters": [
-			[
-				"module",
-				"=",
-				"ABC Hotels"
-			]
-		]
-	}
+    {"doctype": "Room Type"},
+    {"doctype": "Cancelation Policy"},
+    {"doctype": "Rate Code"},
+    {"doctype": "Room Type Inventory"},
+    {"doctype": "Property"},
+    {"doctype": "Room Type Room"},
+    {"doctype": "Amenity"},
+    {"doctype": "Room Category"},
+    {"doctype": "Bed Type"},
+    {"doctype": "Workspace", "filters": [["module", "=", "ABC Hotels"]]},
 ]

@@ -2,6 +2,26 @@
  {
   "docstatus": 0,
   "doctype": "Room Type Room",
+  "floor": 2,
+  "is_pay_master": 0,
+  "modified": "2025-09-06 13:38:40.337018",
+  "name": "Superior King bed",
+  "room_status": "Available",
+  "room_type": "Superior King bed",
+  "room_type_room_beds": [
+   {
+    "bed_count": 1,
+    "bed_type_name": "King Bed",
+    "parent": "Superior King bed",
+    "parentfield": "room_type_room_beds",
+    "parenttype": "Room Type Room"
+   }
+  ],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
   "floor": 0,
   "is_pay_master": 0,
   "modified": "2025-09-05 12:59:41.555708",
