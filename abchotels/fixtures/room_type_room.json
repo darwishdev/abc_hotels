@@ -684,9 +684,9 @@
   "doctype": "Room Type Room",
   "floor": 0,
   "is_pay_master": 0,
-  "modified": "2025-09-05 13:06:08.875176",
+  "modified": "2025-09-06 02:53:20.807049",
   "name": "5001",
-  "room_status": "Available",
+  "room_status": "Occupied",
   "room_type": "Deluxe Twin bed",
   "room_type_room_beds": [
    {
@@ -1086,6 +1086,30 @@
   "is_pay_master": 1,
   "modified": "2025-09-05 14:56:34.865501",
   "name": "9020",
+  "room_status": "Available",
+  "room_type": "PM",
+  "room_type_room_beds": [],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 1,
+  "modified": "2025-09-05 16:27:33.216534",
+  "name": "9021",
+  "room_status": "Available",
+  "room_type": "PM",
+  "room_type_room_beds": [],
+  "room_type_room_image": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Room Type Room",
+  "floor": 0,
+  "is_pay_master": 1,
+  "modified": "2025-09-05 16:28:49.712271",
+  "name": "9022",
   "room_status": "Available",
   "room_type": "PM",
   "room_type_room_beds": [],

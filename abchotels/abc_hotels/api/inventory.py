@@ -1,45 +1,95 @@
 # your_app/api/availability.py
 import frappe
+from frappe.utils import getdate
 from frappe.utils.data import cint
 import pymysql.cursors
 from collections import defaultdict
+
+
 @frappe.whitelist(allow_guest=True, methods=["GET"])
-def get_availability(start, end, rooms, rate_codes_csv, room_types_csv):
+def get_availability(start, end, rooms, rate_codes_csv=None, room_types_csv=None):
     """
-    Calls: CALL get_available_inventory(p_rate_codes_csv, p_room_types_csv, p_start, p_end, p_rooms)
+    Query room_type_inventory_rates directly.
     Returns: list[dict]
     """
-    start_i = cint(start)
-    end_i = cint(end)
+
+    start_d = cint(start)
+    end_d = cint(end)
     rooms_i = cint(rooms)
 
     rate_codes_csv = (rate_codes_csv or "").strip()
     room_types_csv = (room_types_csv or "").strip()
 
-    # Correct order of params
-    params = (start_i,end_i,rooms_i,rate_codes_csv,room_types_csv)
+    sql = """
+      SELECT
+        r.rate_code,
+        r.room_type,
+        r.total_count,
+        MAX(r.occupied_count)        AS max_occupied,
+        MIN(r.total_available_units) AS min_available_units,
+        AVG(r.rate_price)            AS rate_per_night,
+        SUM(r.rate_price)            AS total_stay
+      FROM room_type_inventory_rates r
+      WHERE r.for_date >= %s
+        AND r.for_date < %s
+        AND r.pay_master is false
+        AND (%s = '' OR FIND_IN_SET(r.rate_code, %s))
+        AND (%s = '' OR FIND_IN_SET(r.room_type, %s))
+      GROUP BY
+        r.room_type,
+        r.total_count,
+        r.rate_code
+      HAVING MIN(r.total_available_units) >= %s
+      AND SUM(r.rate_price) > 0
+    """
 
-    query = "CALL get_available_inventory(%s, %s, %s, %s, %s)"
-
-    # Log to console (appears in `bench start`)
-    print("Executing SQL:")
-    print(query)
-    print("Params:", params)
-
-    # Optional: show a "naive interpolated" query for human inspection
-    # ⚠ not safe for production logs — only debugging
-    interpolated = query % tuple(
-        [f"'{p}'" if isinstance(p, str) else p for p in params]
+    # Note: params need to match placeholders order
+    values = (
+        start_d,
+        end_d,
+        rate_codes_csv,
+        rate_codes_csv,
+        room_types_csv,
+        room_types_csv,
+        rooms_i,
     )
-    print("Interpolated:", interpolated)
-    conn = frappe.db.get_connection()
-    cur = conn.cursor(pymysql.cursors.DictCursor)  # new cursor
-    cur.execute(query, params)
-    rows = cur.fetchall()
-    cur.close()
-    return rows
 
+    rows = frappe.db.sql(sql, values, as_dict=True)
 
+    # Group rows by room_type
+    availability = {}
+    rates = []
+
+    for row in rows:
+        rt = row["room_type"]
+        if rt not in availability:
+            availability[rt] = {
+                "room_type": rt,
+                "total_count": row["total_count"],
+                "min_available_units": row["min_available_units"],
+                "max_occupied": row["max_occupied"],
+            }
+        else:
+            availability[rt]["min_available_units"] = min(
+                availability[rt]["min_available_units"], row["min_available_units"]
+            )
+            availability[rt]["max_occupied"] = max(
+                availability[rt]["max_occupied"], row["max_occupied"]
+            )
+
+        rates.append(
+            {
+                "room_type": row["room_type"],
+                "rate_code": row["rate_code"],
+                "rate_per_night": float(row["rate_per_night"]),
+                "total_stay": float(row["total_stay"]),
+            }
+        )
+
+    return {
+        "availability": list(availability.values()),
+        "rates": rates,
+    }
 
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
@@ -71,7 +121,9 @@ def apply_reservation_inventory_api(reservation_name: str, target_docstatus: int
 
 # Alternative version with more date info for advanced UI
 @frappe.whitelist(allow_guest=True, methods=["GET"])
-def get_availability_grid_detailed(start_date: int, end_date: int, room_type: str = None):
+def get_availability_grid_detailed(
+    start_date: int, end_date: int, room_type: str = None
+):
     """
     Return availability grid with SQL doing heavy lifting.
     """
@@ -155,19 +207,23 @@ def get_availability_grid_detailed(start_date: int, end_date: int, room_type: st
     columns = [{"label": "Room Type", "fieldname": "room_type", "width": 200}]
 
     for col in date_columns:
-        columns.append({
-            "label": col["formatted_date"],
-            "fieldname": f"date_{col['for_date']}",
-            "width": 120,
-            "is_weekend": bool(col["weekend_indr"])
-        })
+        columns.append(
+            {
+                "label": col["formatted_date"],
+                "fieldname": f"date_{col['for_date']}",
+                "width": 120,
+                "is_weekend": bool(col["weekend_indr"]),
+            }
+        )
 
     # Build data structure with pre-rendered HTML
     data = {}
 
     for room_row in grouped_data:
         room_type = room_row["room_type"]
-        days_data = frappe.parse_json(room_row["days_data"]) if room_row["days_data"] else []
+        days_data = (
+            frappe.parse_json(room_row["days_data"]) if room_row["days_data"] else []
+        )
 
         # Create room type entry
         data[room_type] = []
@@ -201,21 +257,23 @@ def get_availability_grid_detailed(start_date: int, end_date: int, room_type: st
             </div>
             """
 
-            data[room_type].append({
-                "total_count": total,
-                "occupied_count": occupied,
-                "out_of_order_count": out_of_order,
-                "total_available_units": available,
-                "for_date": day["for_date"],
-                "html_cell": html_cell,
-                "availability_pct": round(availability_pct, 1)
-            })
+            data[room_type].append(
+                {
+                    "total_count": total,
+                    "occupied_count": occupied,
+                    "out_of_order_count": out_of_order,
+                    "total_available_units": available,
+                    "for_date": day["for_date"],
+                    "html_cell": html_cell,
+                    "availability_pct": round(availability_pct, 1),
+                }
+            )
 
     return {
         "columns": columns,
         "data": data,
         "total_room_types": len(data),
-        "total_days": len(date_columns)
+        "total_days": len(date_columns),
     }
 
 
@@ -284,19 +342,20 @@ def get_availability_raw_data(start_date: int, end_date: int, room_type: str = N
 
     # Add Room Type column
     columns = [{"label": "Room Type", "fieldname": "room_type", "width": 200}]
-    columns.extend([
-        {
-            "label": col["label"],
-            "fieldname": col["fieldname"],
-            "width": 120,
-            "is_weekend": bool(col["is_weekend"])
-        } for col in columns_data
-    ])
+    columns.extend(
+        [
+            {
+                "label": col["label"],
+                "fieldname": col["fieldname"],
+                "width": 120,
+                "is_weekend": bool(col["is_weekend"]),
+            }
+            for col in columns_data
+        ]
+    )
 
-    return {
-        "columns": columns,
-        "data": grouped_data
-    }
+    return {"columns": columns, "data": grouped_data}
+
 
 @frappe.whitelist(allow_guest=True, methods=["GET"])
 def get_availability_grid_grouped(start_date: int, end_date: int):
@@ -326,7 +385,8 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
     }
     """
     # 1) Columns (rich header info) directly from dim_date
-    columns = frappe.db.sql("""
+    columns = frappe.db.sql(
+        """
         SELECT
           d.for_date,
           CONCAT(LEFT(d.day_name, 3), ' ', LPAD(d.day_of_month, 2, '0')) AS label_text,
@@ -336,13 +396,17 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
         FROM dim_date d
         WHERE d.for_date BETWEEN %s AND %s
         ORDER BY d.for_date
-    """, (start_date, end_date), as_dict=True)
+    """,
+        (start_date, end_date),
+        as_dict=True,
+    )
 
     if not columns:
         return {"columns": [], "data": []}
 
     # 2) Inventory (no pricing) for the same range
-    rows = frappe.db.sql("""
+    rows = frappe.db.sql(
+        """
         SELECT
           inv.room_type,
           inv.for_date,
@@ -353,7 +417,10 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
         FROM room_type_inventory inv
         WHERE inv.for_date BETWEEN %s AND %s
         ORDER BY inv.room_type, inv.for_date
-    """, (start_date, end_date), as_dict=True)
+    """,
+        (start_date, end_date),
+        as_dict=True,
+    )
 
     # 3) Group per room_type, align values to the columns order, fill missing with 0
     col_dates = [c["for_date"] for c in columns]
@@ -366,8 +433,8 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
     for room_type, by_date in buckets.items():
         # Build parallel arrays aligned with col_dates
         available = []
-        occupied  = []
-        ooo       = []
+        occupied = []
+        ooo = []
         for fd in col_dates:
             rec = by_date.get(fd)
             if rec:
@@ -379,19 +446,32 @@ def get_availability_grid_grouped(start_date: int, end_date: int):
                 occupied.append(0)
                 ooo.append(0)
 
-        payload_rows.append({
-            "room_type": room_type,
-            "rows": [
-                {"label": "Available",    "key": "total_available_units", "values": available},
-                {"label": "Occupied",     "key": "occupied_count",        "values": occupied},
-                {"label": "Out of Order", "key": "out_of_order_count",    "values": ooo},
-            ]
-        })
+        payload_rows.append(
+            {
+                "room_type": room_type,
+                "rows": [
+                    {
+                        "label": "Available",
+                        "key": "total_available_units",
+                        "values": available,
+                    },
+                    {"label": "Occupied", "key": "occupied_count", "values": occupied},
+                    {
+                        "label": "Out of Order",
+                        "key": "out_of_order_count",
+                        "values": ooo,
+                    },
+                ],
+            }
+        )
 
     return {"columns": columns, "data": payload_rows}
 
+
 @frappe.whitelist()
-def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: str = None):
+def get_room_type_rates_grid(
+    start_date_int: int, end_date_int: int, rate_code: str = None, room_type: str = None
+):
     """
     Return room type rates grid with SQL doing heavy lifting.
     Data is now grouped by room_type first, then by rate_code.
@@ -415,15 +495,21 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
         weekend_indr
     FROM dates
     """
-    date_columns = frappe.db.sql(columns_sql, (start_date_int, end_date_int), as_dict=True)
+    date_columns = frappe.db.sql(
+        columns_sql, (start_date_int, end_date_int), as_dict=True
+    )
 
     # Build room type condition
     room_type_condition = ""
+    rate_code_condition = ""
     params = [start_date_int, end_date_int]
     if room_type:
         room_type_condition = "AND inv.room_type = %s"
         params.append(room_type)
 
+    if rate_code:
+        rate_code_condition = "AND rate_code = %s"
+        params.append(rate_code)
     # Main data query with grouping by room_type first, then rate_code
     data_sql = f"""
     WITH dates AS (
@@ -463,6 +549,7 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
             ) ORDER BY for_date
         ) AS days_data
     FROM rates_data
+    WHERE 1=1 {rate_code_condition}
     GROUP BY room_type, rate_code
     ORDER BY room_type, rate_code
     """
@@ -472,16 +559,18 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
     # Build columns structure
     columns = [
         {"label": "Room Type", "fieldname": "room_type", "width": 200},
-        {"label": "Rate Code", "fieldname": "rate_code", "width": 100}
+        {"label": "Rate Code", "fieldname": "rate_code", "width": 100},
     ]
 
     for col in date_columns:
-        columns.append({
-            "label": col["formatted_date"],
-            "fieldname": f"date_{col['for_date']}",
-            "width": 120,
-            "is_weekend": bool(col["weekend_indr"])
-        })
+        columns.append(
+            {
+                "label": col["formatted_date"],
+                "fieldname": f"date_{col['for_date']}",
+                "width": 120,
+                "is_weekend": bool(col["weekend_indr"]),
+            }
+        )
 
     # Build data structure grouped by room type
     data = {}
@@ -489,7 +578,9 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
     for rate_row in grouped_data:
         room_type_name = rate_row["room_type"]
         rate_code = rate_row["rate_code"]
-        days_data = frappe.parse_json(rate_row["days_data"]) if rate_row["days_data"] else []
+        days_data = (
+            frappe.parse_json(rate_row["days_data"]) if rate_row["days_data"] else []
+        )
 
         # Create room type entry if it doesn't exist
         if room_type_name not in data:
@@ -502,14 +593,16 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
             rate_price = day["rate_price"] or 0
             is_weekend = day["weekend_indr"]
 
-            data[room_type_name][rate_code].append({
-                "for_date": day["for_date"],
-                "rate_price": rate_price,
-                "room_type": room_type_name,
-                "rate_code": rate_code,
-                "formatted_date": day["formatted_date"],
-                "is_weekend": bool(is_weekend)
-            })
+            data[room_type_name][rate_code].append(
+                {
+                    "for_date": day["for_date"],
+                    "rate_price": rate_price,
+                    "room_type": room_type_name,
+                    "rate_code": rate_code,
+                    "formatted_date": day["formatted_date"],
+                    "is_weekend": bool(is_weekend),
+                }
+            )
 
     # Count totals
     total_room_types = len(data)
@@ -520,11 +613,14 @@ def get_room_type_rates_grid(start_date_int: int, end_date_int: int, room_type: 
         "data": data,
         "total_room_types": total_room_types,
         "total_rate_codes": total_rate_codes,
-        "total_days": len(date_columns)
+        "total_days": len(date_columns),
     }
 
+
 @frappe.whitelist(allow_guest=True, methods=["GET"])
-def get_availability_grid_simple(start_date: int, end_date: int, room_type: str = None, rate_code: str = None):
+def get_availability_grid_simple(
+    start_date: int, end_date: int, room_type: str = None, rate_code: str = None
+):
     """
     Return availability grid with SQL doing heavy lifting.
     Added rate_code filter parameter (nullable).
@@ -621,19 +717,23 @@ def get_availability_grid_simple(start_date: int, end_date: int, room_type: str 
     columns = [{"label": "Room Type", "fieldname": "room_type", "width": 200}]
 
     for col in date_columns:
-        columns.append({
-            "label": col["formatted_date"],
-            "fieldname": f"date_{col['for_date']}",
-            "width": 120,
-            "is_weekend": bool(col["weekend_indr"])
-        })
+        columns.append(
+            {
+                "label": col["formatted_date"],
+                "fieldname": f"date_{col['for_date']}",
+                "width": 120,
+                "is_weekend": bool(col["weekend_indr"]),
+            }
+        )
 
     # Build data structure with pre-rendered HTML
     data = {}
 
     for room_row in grouped_data:
         room_type = room_row["room_type"]
-        days_data = frappe.parse_json(room_row["days_data"]) if room_row["days_data"] else []
+        days_data = (
+            frappe.parse_json(room_row["days_data"]) if room_row["days_data"] else []
+        )
 
         # Create room type entry
         data[room_type] = []
@@ -667,15 +767,17 @@ def get_availability_grid_simple(start_date: int, end_date: int, room_type: str 
             </div>
             """
 
-            data[room_type].append({
-                "total_count": total,
-                "occupied_count": occupied,
-                "out_of_order_count": out_of_order,
-                "total_available_units": available,
-                "for_date": day["for_date"],
-                "html_cell": html_cell,
-                "availability_pct": round(availability_pct, 1)
-            })
+            data[room_type].append(
+                {
+                    "total_count": total,
+                    "occupied_count": occupied,
+                    "out_of_order_count": out_of_order,
+                    "total_available_units": available,
+                    "for_date": day["for_date"],
+                    "html_cell": html_cell,
+                    "availability_pct": round(availability_pct, 1),
+                }
+            )
 
     return {
         "columns": columns,
@@ -686,9 +788,10 @@ def get_availability_grid_simple(start_date: int, end_date: int, room_type: str 
             "room_type": room_type,
             "rate_code": rate_code,
             "start_date": start_date,
-            "end_date": end_date
-        }
+            "end_date": end_date,
+        },
     }
+
 
 # Alternative simpler version that just returns raw data for custom rendering
 @frappe.whitelist(allow_guest=True, methods=["GET"])
@@ -755,19 +858,20 @@ def get_availability_raw_data(start_date: int, end_date: int, room_type: str = N
 
     # Add Room Type column
     columns = [{"label": "Room Type", "fieldname": "room_type", "width": 200}]
-    columns.extend([
-        {
-            "label": col["label"],
-            "fieldname": col["fieldname"],
-            "width": 120,
-            "is_weekend": bool(col["is_weekend"])
-        } for col in columns_data
-    ])
+    columns.extend(
+        [
+            {
+                "label": col["label"],
+                "fieldname": col["fieldname"],
+                "width": 120,
+                "is_weekend": bool(col["is_weekend"]),
+            }
+            for col in columns_data
+        ]
+    )
 
-    return {
-        "columns": columns,
-        "data": grouped_data
-    }
+    return {"columns": columns, "data": grouped_data}
+
 
 @frappe.whitelist(allow_guest=False, methods=["POST"])
 def reallocate_inventory_from_assignments(reservation_name: str):
@@ -776,17 +880,18 @@ def reallocate_inventory_from_assignments(reservation_name: str):
     Reads child table rows from DB, so we commit parent changes first on the client.
     """
     import pymysql.cursors
+
     conn = frappe.db.get_connection()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     try:
-        cur.execute("CALL apply_reservation_reassign_from_child(%s)", (reservation_name,))
+        cur.execute(
+            "CALL apply_reservation_reassign_from_child(%s)", (reservation_name,)
+        )
         result = cur.fetchall() or []
         conn.commit()
     finally:
         cur.close()
     return result  # e.g. [{'status':'REALLOCATED'}] / [{'status':'NO_CHANGE'}] / [{'status':'NO_ASSIGNMENTS'}]
-
-
 
 
 @frappe.whitelist()
@@ -796,7 +901,8 @@ def get_room_type_inventory_rates(room_type=None, start_date=None, end_date=None
     If a parameter is NULL, COALESCE will fallback to the column itself,
     meaning the condition is always true (no filter).
     """
-    rows = frappe.db.sql("""
+    rows = frappe.db.sql(
+        """
         SELECT
             inv.for_date,
             inv.room_type,
@@ -809,18 +915,18 @@ def get_room_type_inventory_rates(room_type=None, start_date=None, end_date=None
           AND inv.for_date BETWEEN COALESCE(%(start_date)s, inv.for_date)
                                AND COALESCE(%(end_date)s, inv.for_date)
         ORDER BY inv.for_date, irc.rate_code
-    """, {
-        "room_type": room_type,
-        "start_date": start_date,
-        "end_date": end_date
-    }, as_dict=True)
+    """,
+        {"room_type": room_type, "start_date": start_date, "end_date": end_date},
+        as_dict=True,
+    )
 
     return rows
 
 
-
 @frappe.whitelist()
-def seed_room_type_inventory_rate_codes(rate_code, room_type, start_date, end_date, price):
+def seed_room_type_inventory_rate_codes(
+    rate_code, room_type, start_date, end_date, price
+):
     params = (rate_code, room_type, start_date, end_date, price)
     query = "CALL seed_room_type_inventory_rate_codes(%s, %s, %s, %s, %s)"
     conn = frappe.db.get_connection()

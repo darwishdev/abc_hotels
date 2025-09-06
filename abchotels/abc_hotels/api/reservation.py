@@ -5,12 +5,14 @@ from frappe import _
 from frappe.utils import nowdate
 from frappe.utils import today
 from frappe.utils import today, getdate, add_days
+
+
 @frappe.whitelist()
 def check_in(reservation_id):
     # For now just return hello world
     # create new folio and sales invoice with empty items
     try:
-        frappe.db.sql("CALL reservation_create_folio(%s)" , reservation_id)
+        frappe.db.sql("CALL reservation_create_folio(%s)", reservation_id)
 
         # 2) Get new folio id (your SP uses CONCAT('f-', reservation_name))
         folio_id = f"f-{reservation_id}"
@@ -26,34 +28,43 @@ def check_in(reservation_id):
             invoice_doc = frappe.new_doc("POS Invoice")
             invoice_doc.name = invoice_id
             invoice_doc.update_stock = False
-            invoice_doc.taxes_and_charges = 'Egypt Hospitality - CH'
+            invoice_doc.taxes_and_charges = "Egypt Hospitality - CH"
             invoice_doc.customer = reservation.customer  # from Hotel Reservation
             invoice_doc.posting_date = nowdate()
             invoice_doc.is_pos = 1
-            invoice_doc.folio = folio_id   # 🔹 your custom Link field
-            invoice_doc.set("items", [{
-                "item_code": "Folio Initial Item",
-                "item_name": "Folio Initial Item",
-                "qty": 1,
-                "rate": 0,
-                "uom": "Nos",
-                "is_free_item" : True,
-                "income_account" : "4110 - Sales - CH"
-            }])
+            invoice_doc.folio = folio_id  # 🔹 your custom Link field
+            invoice_doc.set(
+                "items",
+                [
+                    {
+                        "item_code": "Folio Initial Item",
+                        "item_name": "Folio Initial Item",
+                        "qty": 1,
+                        "rate": 0,
+                        "uom": "Nos",
+                        "is_free_item": True,
+                        "income_account": "4110 - Sales - CH",
+                    }
+                ],
+            )
             invoice_doc.set_missing_values()
             invoice_doc.insert(ignore_permissions=True)
 
         # 5) Update Room status
         if reservation.room_type_room:
-            frappe.db.set_value("Room Type Room", reservation.room_type_room, "room_status", "Occupied")
+            frappe.db.set_value(
+                "Room Type Room", reservation.room_type_room, "room_status", "Occupied"
+            )
 
         frappe.db.commit()
     except Exception as e:
         raise e
     return f"Hello World from {reservation_id}"
 
+
 def validate(self):
     set_room_type_assigned(self)
+
 
 def set_room_type_assigned(self):
     """Set room_type_assigned based on the first assigned room's room type"""
@@ -76,9 +87,6 @@ def set_room_type_assigned(self):
         self.room_type_assigned = None
 
 
-
-
-
 @frappe.whitelist()
 def get_dashboard_data(as_of_date):
     """
@@ -93,7 +101,8 @@ def get_dashboard_data(as_of_date):
     as_of_date_str = f"{str(as_of_date_int)[:4]}-{str(as_of_date_int)[4:6]}-{str(as_of_date_int)[6:]}"
 
     # --- Room Inventory Aggregates ---
-    total_rooms, in_house, available, out_of_order = frappe.db.sql("""
+    total_rooms, in_house, available, out_of_order = frappe.db.sql(
+        """
         SELECT
             COALESCE(SUM(total_count),0)      AS total_rooms,
             COALESCE(SUM(occupied_count),0)   AS in_house,
@@ -101,20 +110,32 @@ def get_dashboard_data(as_of_date):
             COALESCE(SUM(out_of_order_count),0)    AS out_of_order
         FROM room_type_inventory
         WHERE for_date = %s
-    """, as_of_date_int)[0]
+    """,
+        as_of_date_int,
+    )[0]
 
     # --- ADR from Rate Codes ---
-    adr = frappe.db.sql("""
+    adr = (
+        frappe.db.sql(
+            """
         SELECT COALESCE(AVG(rate_price),0)
         FROM room_type_inventory_rates
         WHERE for_date = %s
-    """, as_of_date_int)[0][0] or 0
+    """,
+            as_of_date_int,
+        )[0][0]
+        or 0
+    )
 
     # --- Arrivals / Departures ---
-    arrivals = frappe.db.count("Hotel Reservation", {"check_in_date": as_of_date_str, "docstatus" :
-                                                     1})
-    departures = frappe.db.count("Hotel Reservation", {"check_out_date": as_of_date_str ,  "docstatus" :
-                                                     1})
+    arrivals = frappe.db.count(
+        "Hotel Reservation",
+        {"check_in_completed": 0, "check_in_date": as_of_date_str, "docstatus": 1},
+    )
+    departures = frappe.db.count(
+        "Hotel Reservation",
+        {"check_out_completed": 0, "check_out_date": as_of_date_str, "docstatus": 1},
+    )
 
     # --- Occupancy % ---
     occupancy_pct = round((in_house / available) * 100, 2) if available else 0
@@ -130,9 +151,8 @@ def get_dashboard_data(as_of_date):
             "adr": adr,
             "arrivals": arrivals,
             "departures": departures,
-        }
+        },
     }
-
 
 
 @frappe.whitelist()
@@ -154,18 +174,22 @@ def get_night_audit_candidates(audit_date=None):
         "candidates": rows,
         "count": len(rows),
     }
+
+
 @frappe.whitelist()
 def run_night_audit(audit_date=None):
 
     settings = frappe.get_single("ABC Hotels Settings")
-    s_audit_date =  settings.business_date
+    s_audit_date = settings.business_date
     if not s_audit_date:
         frappe.throw("Business Date is not set in ABC Hotels Settings")
 
     if audit_date:
         s_audit_date = audit_date
 
-    audit_date_int = int(getdate(s_audit_date).strftime("%Y%m%d"))  # convert to int YYYYMMDD
+    audit_date_int = int(
+        getdate(s_audit_date).strftime("%Y%m%d")
+    )  # convert to int YYYYMMDD
 
     query = "CALL switch_night_candidates(%s)"
     conn = frappe.db.get_connection()
@@ -187,15 +211,18 @@ def run_night_audit(audit_date=None):
         )
 
         if not exists_for_date:
-            invoice.append("items", {
-                "item_code": "ROOM-ACCOM",
-                "item_name": "Room Accommodation",
-                "folio_window": row["folio_window_id"],
-                "qty": 1,
-                "rate": row["nightly_rate"],
-                "uom": "Nos",
-                "for_date": audit_date_int,
-            })
+            invoice.append(
+                "items",
+                {
+                    "item_code": "ROOM-ACCOM",
+                    "item_name": "Room Accommodation",
+                    "folio_window": row["folio_window_id"],
+                    "qty": 1,
+                    "rate": row["nightly_rate"],
+                    "uom": "Nos",
+                    "for_date": audit_date_int,
+                },
+            )
 
         # recalc + save
         invoice.set_missing_values()
@@ -204,7 +231,7 @@ def run_night_audit(audit_date=None):
         frappe.db.commit()
 
         processed.append(invoice.name)
-   # 3. Advance business_date by 1 day
+    # 3. Advance business_date by 1 day
     settings.business_date = add_days(getdate(audit_date), 1)
     settings.save(ignore_permissions=True)
     frappe.db.commit()

@@ -133,16 +133,31 @@ frappe.pages["front_desk_dashborad"].on_page_load = function (wrapper) {
         );
 
         // 🔹 Click actions
-        $(".kpi-card[data-click='arrivals']").on("click", () => {
-            frappe.set_route("List", "Hotel Reservation", {
-                check_in_date: data.as_of_date,
-            });
-        });
-        $(".kpi-card[data-click='departures']").on("click", () => {
-            frappe.set_route("List", "Hotel Reservation", {
-                check_out_date: data.as_of_date,
-            });
-        });
+
+$(".kpi-card[data-click='arrivals']").on("click", () => {
+            frappe.route_options = [
+
+    ["Hotel Reservation", "check_in_completed", "=", "0"],
+    ["Hotel Reservation", "check_in_date", "=", data.as_of_date],
+];
+frappe.set_route("List", "Hotel Reservation");
+frappe.after_ajax(() => {
+    if (cur_list && cur_list.doctype === "Hotel Reservation") {
+        cur_list.filter_area.add([
+            ["Hotel Reservation", "check_in_completed", "=", "0"],
+        ]);
+        cur_list.refresh();
+    }
+});
+});
+
+$(".kpi-card[data-click='departures']").on("click", () => {
+    frappe.route_options = {
+        check_out_date: ["=", data.as_of_date],
+        check_out_completed: ["=", 0],
+    };
+    frappe.set_route("List", "Hotel Reservation");
+});
     }
 
     // Initial load

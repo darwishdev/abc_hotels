@@ -25,6 +25,12 @@ frappe.pages["room_type_rates"].on_page_load = function (wrapper) {
         fieldtype: "Link",
         fieldname: "room_type",
         options: "Room Type",
+    });
+    const rate_code_field = page.add_field({
+        label: "Rate Code",
+        fieldtype: "Link",
+        fieldname: "rate_code",
+        options: "Rate Code",
     }); // --- NEW: Seed Rates Button ---
     page.add_button("Seed Rates", () => {
         // Get current filter values
@@ -120,6 +126,7 @@ frappe.pages["room_type_rates"].on_page_load = function (wrapper) {
         let room_type = room_type_field.get_value() || "";
         let start_date = start_date_field.get_value();
         let end_date = end_date_field.get_value();
+        let rate_code = rate_code_field.get_value();
         if (!start_date || !end_date) {
             frappe.msgprint("Please select both start and end dates.");
             return;
@@ -134,6 +141,7 @@ frappe.pages["room_type_rates"].on_page_load = function (wrapper) {
                 room_type: room_type,
                 start_date_int: start_int,
                 end_date_int: end_int,
+                rate_code: rate_code
             },
             callback: function (r) {
                 if (!r.message) return;

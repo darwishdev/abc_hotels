@@ -1,3 +1,11 @@
+frappe.listview_settings["Hotel Reservation"] = {
+    onload(listview) {
+        // Force default filters
+        listview.filter_area.add([
+            ["Hotel Reservation", "check_in_completed", "=", "0"],
+        ]);
+    },
+};
 frappe.ui.form.on("Hotel Reservation", {
     check_in_date: function (frm) {
         calculate_total_base_amount(frm);
@@ -255,7 +263,7 @@ async function fetch_and_render_availability(frm) {
         },
         callback: (r) => {
             const rows = r.message || [];
-            if (!rows.length) {
+            if (!rows.availability.length) {
                 show_availability(
                     frm,
                     `<div class="text-orange">No availability found for the selected dates.</div>`,
@@ -478,130 +486,68 @@ function calculate_total_base_amount(frm) {
         frm.set_value("total_base_amount", 0);
     }
 }
+//
+// function render_availability_table(frm, rows, ctx) {
+//     // 1) Group rows by room_type
+//     const grouped = {};
+//
+//     frappe.msgprint(`rows : ${JSON.stringify(rows)}`)
+//     rows.forEach((r) => {
+//         if (!grouped[r.room_type]) {
+//             grouped[r.room_type] = {
+//                 room_type: r.room_type,
+//                 total_count: r.total_count,
+//                 max_occupied: r.max_occupied,
+//                 min_available_units: r.min_available_units,
+//                 rates: [],
+//             };
+//         }
+//         grouped[r.room_type].rates.push({
+//             rate_code: r.rate_code,
+//             rate_per_night: r.rate_per_night,
+//             total_stay: r.total_stay,
+//         });
+//     });
+//
+//     const roomGroups = Object.values(grouped);
+//
+//     frappe.msgprint(`rows : ${JSON.stringify(roomGroups)}`)
+//     // 2) Render cards
+// const html = `
+//   <style>
+//   <div class="avail-grid">
+// ${JSON.stringify(rows)}
+//   </div>`;
+//
+//
+//
+//     show_availability(frm, html);
+//
+//     // 3) Wire up select buttons
+//     const $wrap = get_availability_wrapper(frm);
+//     $wrap.off("click.select").on("click.select", ".select-rate", function () {
+//         const room_type = $(this).data("room");
+//         const idx = $(this).data("index");
+//         const group = roomGroups.find((r) => r.room_type === room_type);
+//         const rate = group.rates[idx];
+//         if (rate) {
+//             apply_selection_to_form(
+//                 frm,
+//                 {
+//                     room_type,
+//                     rate_code: rate.rate_code,
+//                     rate_per_night: rate.rate_per_night,
+//                     total_stay: rate.total_stay,
+//                 },
+//                 ctx,
+//             );
+//         }
+//     });
+// }
+// CSS as variable
 
-function render_availability_table(frm, rows, ctx) {
-    // 1) Group rows by room_type
-    const grouped = {};
-    rows.forEach((r) => {
-        if (!grouped[r.room_type]) {
-            grouped[r.room_type] = {
-                room_type: r.room_type,
-                total_count: r.total_count,
-                max_occupied: r.max_occupied,
-                min_available_units: r.min_available_units,
-                rates: [],
-            };
-        }
-        grouped[r.room_type].rates.push({
-            rate_code: r.rate_code,
-            rate_per_night: r.rate_per_night,
-            total_stay: r.total_stay,
-        });
-    });
-
-    const roomGroups = Object.values(grouped);
-
-    // 2) Render cards
-    const html = `
-  <style>
-    .avail-grid {
-      display:flex; flex-wrap:wrap; gap:16px; margin-top:12px;
-    }
-    .avail-card {
-      flex: 1 1 300px; max-width: 460px;
-      border-radius: 12px; background:#fff;
-      box-shadow:0 2px 6px rgba(0,0,0,.08);
-      overflow:hidden; display:flex; flex-direction:column;
-    }
-    .avail-card .hd {
-      padding:12px 16px;
-    background: black;
-      color:#fff; font-weight:600;
-      display:flex; justify-content:space-between; align-items:center;
-    }
-    .avail-card .meta { font-size:12px; opacity:.9; }
-    .avail-card .bd { padding:14px 16px; flex:1; }
-    .avail-badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
-    .avail-badge {
-      background:#f0f9ff; border:1px solid #bae6fd; color:#0369a1;
-      font-size:12px; font-weight:500; padding:3px 8px; border-radius:6px;
-    }
-    .rates { margin-top:12px; border-top:1px solid #f1f5f9; padding-top:10px; }
-    .rate-row {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:6px 0; border-bottom:1px dashed #e5e7eb;
-    }
-    .rate-row:last-child { border-bottom:none; }
-    .rate-name { font-weight:500; color:#374151; }
-    .rate-price { font-size:14px; font-weight:600; color:#16a34a; margin-left:auto; margin-right:12px; }
-    .rate-total { font-size:13px; color:#6b7280; }
-    .btn-xs {
-      padding:4px 10px; font-size:12px; border-radius:6px;
-        margin-inline:10px;
-    }
-    .btn-xs:hover { background:#1d4ed8; }
-  </style>
-
-  <div class="avail-grid">
-    ${roomGroups
-        .map(
-            (room, i) => `
-      <div class="avail-card">
-        <div class="hd">
-          <div class="room">${frappe.utils.escape_html(room.room_type ?? "")}</div>
-          <div class="meta">${nightsLabel(ctx.start, ctx.end)}</div>
-        </div>
-        <div class="bd">
-          <div class="avail-badges">
-            <span class="avail-badge">Total: ${safeNum(room.total_count)}</span>
-            <span class="avail-badge">Max Occ: ${safeNum(room.max_occupied)}</span>
-            <span class="avail-badge">Min Avail: ${safeNum(room.min_available_units)}</span>
-          </div>
-
-          <div class="rates">
-            ${room.rates
-                .map(
-                    (rate, j) => `
-              <div class="rate-row">
-                <div class="rate-name">${frappe.utils.escape_html(rate.rate_code)}</div>
-                <div class="rate-price">${format_currency_safe(rate.rate_per_night)}</div>
-                <button style="margin-inline:2px" class="btn-xs select-rate"
-                        data-room="${room.room_type}"
-                        data-index="${j}">Select</button>
-              </div>
-            `,
-                )
-                .join("")}
-          </div>
-        </div>
-      </div>
-    `,
-        )
-        .join("")}
-  </div>`;
-
-    show_availability(frm, html);
-
-    // 3) Wire up select buttons
-    const $wrap = get_availability_wrapper(frm);
-    $wrap.off("click.select").on("click.select", ".select-rate", function () {
-        const room_type = $(this).data("room");
-        const idx = $(this).data("index");
-        const group = roomGroups.find((r) => r.room_type === room_type);
-        const rate = group.rates[idx];
-        if (rate) {
-            apply_selection_to_form(
-                frm,
-                {
-                    room_type,
-                    rate_code: rate.rate_code,
-                    rate_per_night: rate.rate_per_night,
-                    total_stay: rate.total_stay,
-                },
-                ctx,
-            );
-        }
-    });
+function format_currency(val) {
+    return frappe.format(val, { fieldtype: "Currency" });
 }
 function nightsLabel(start, end) {
     const n = Math.max(1, frappe.datetime.get_day_diff(end, start));
@@ -626,4 +572,273 @@ function apply_selection_to_form(frm, row, ctx) {
         message: `Selected ${row.rate_code} · ${row.room_type}`,
         indicator: "green",
     });
+}
+const AVAILABILITY_CSS = `
+<style>
+#availability-wrapper {
+  position: relative;
+  font-family: system-ui, sans-serif;
+  color: #111827;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  color: #0369a1;
+  z-index: 50;
+}
+
+/* Section headings */
+section h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Availability pills */
+.avail-bar {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+.avail-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.avail-pill .count {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.avail-pill.active {
+  background: #0369a1;
+  color: #fff;
+  border-color: #0369a1;
+}
+
+/* Rates section */
+.rates-wrapper {
+  position: relative;
+}
+.rates-section {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  list-style: none;
+  margin: 0;
+}
+
+/* Rate cards */
+.rate-card {
+  flex: 0 0 auto;
+  min-width: 160px;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.rate-card h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.rate-card .room-type {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0 0 0.25rem;
+}
+.rate-card .price {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Selected & disabled state */
+.rate-card.selected {
+  border: 2px solid #0369a1;
+}
+.rate-card[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+color:var(--heading-color);
+}
+
+/* Scroll buttons */
+.scroll-btn {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  z-index: 2;
+}
+.scroll-btn.left { left: -12px; }
+.scroll-btn.right { right: -12px; }
+</style>
+`;
+let activeRoomFilter = null;
+let selectedRateKey = null;
+
+function render_availability_table(frm, data, ctx) {
+    let html = AVAILABILITY_CSS;
+
+    html += `
+      <div id="availability-wrapper" style="position:relative;">
+        <div class="loading-overlay" id="availability-loading" style="display:none;">
+          Loading…
+        </div>
+
+        <section class="availability">
+          <h3>Availability</h3>
+          <ul class="avail-bar">
+    `;
+    data.availability.forEach((room) => {
+        const activeClass = room.room_type === activeRoomFilter ? "active" : "";
+        html += `
+          <li>
+            <button class="avail-pill ${activeClass}"
+                    data-room="${room.room_type}"
+                    aria-pressed="${activeClass ? "true" : "false"}">
+              <span class="count">${room.min_available_units}</span>
+              <span class="label">${room.room_type}</span>
+            </button>
+          </li>`;
+    });
+    html += `</ul></section>`;
+
+    // Rates
+    html += `
+        <section class="rates">
+          <h3>Rates</h3>
+          <div class="rates-wrapper">
+            <button class="scroll-btn left" id="scrollLeft" aria-label="Scroll left">&#8249;</button>
+            <button class="scroll-btn right" id="scrollRight" aria-label="Scroll right">&#8250;</button>
+            <ul class="rates-section" id="ratesScroller" role="list">
+    `;
+
+    const filteredRates = data.rates.filter(
+        rate => !activeRoomFilter || rate.room_type === activeRoomFilter
+    );
+
+    filteredRates.forEach((rate, idx) => {
+        const key = `${rate.room_type}::${rate.rate_code}`;
+        const isSelected = key === selectedRateKey;
+        const selectedClass = isSelected ? "selected" : "";
+        const disabledAttr = isSelected ? "disabled" : "";
+        html += `
+          <li>
+            <button class="rate-card select-rate ${selectedClass}"
+                    data-room="${rate.room_type}"
+                    data-index="${idx}"
+                    aria-pressed="${isSelected ? "true" : "false"}"
+                    ${disabledAttr}>
+              <h4>${rate.rate_code}</h4>
+              <p class="room-type">${rate.room_type}</p>
+              <p class="price">${format_currency(rate.rate_per_night)}</p>
+            </button>
+          </li>`;
+    });
+
+    html += `
+            </ul>
+          </div>
+        </section>
+      </div>
+    `;
+
+    show_availability(frm, html);
+
+    // Save context
+    window.roomGroups = data.availability.map(room => ({
+        ...room,
+        rates: data.rates.filter(r => r.room_type === room.room_type),
+    }));
+    window.lastAvailabilityData = data;
+    window.lastCtx = ctx;
+}
+
+// Loading overlay toggle
+function setLoading(show = true) {
+    const overlay = document.getElementById("availability-loading");
+    if (overlay) overlay.style.display = show ? "flex" : "none";
+}
+// Room type filter
+$(document)
+  .off("click.pill")
+  .on("click.pill", ".avail-pill", debounceLeading(function () {
+      setLoading(true);
+      const room = $(this).data("room");
+      activeRoomFilter = activeRoomFilter === room ? null : room;
+      render_availability_table(cur_frm, window.lastAvailabilityData, window.lastCtx);
+      setLoading(false);
+  }, 300));
+
+// Rate selection
+$(document)
+  .off("click.select")
+  .on("click.select", ".select-rate", debounceLeading(function () {
+      setLoading(true);
+      const room_type = $(this).data("room");
+      const idx = $(this).data("index");
+      const group = window.roomGroups.find((r) => r.room_type === room_type);
+      const rate = group?.rates[idx];
+      if (rate) {
+          selectedRateKey = `${room_type}::${rate.rate_code}`;
+          apply_selection_to_form(
+              cur_frm,
+              {
+                  room_type,
+                  rate_code: rate.rate_code,
+                  rate_per_night: rate.rate_per_night,
+                  total_stay: rate.total_stay,
+              },
+              window.lastCtx
+          );
+          render_availability_table(cur_frm, window.lastAvailabilityData, window.lastCtx);
+      }
+      setLoading(false);
+  }, 300));
+function debounceLeading(fn, delay = 300) {
+    let timeout = null;
+    return function (...args) {
+        if (!timeout) {
+            fn.apply(this, args); // run immediately
+            timeout = setTimeout(() => {
+                timeout = null; // release lock after delay
+            }, delay);
+        }
+    };
+}
+
+function format_currency(val) {
+    return frappe.format(val, { fieldtype: "Currency" });
 }
